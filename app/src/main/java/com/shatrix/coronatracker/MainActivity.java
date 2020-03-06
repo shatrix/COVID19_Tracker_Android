@@ -18,6 +18,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,7 +31,7 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView textViewCases, textViewRecovered, textViewDeaths, textViewDate ;
+    TextView textViewCases, textViewRecovered, textViewDeaths, textViewDate, textViewDeathsTitle, textViewRecoveredTitle ;
     Button btnRefresh ;
     Handler handler;
     public ProgressBar pBar;
@@ -42,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences.Editor editor;
     Calendar myCalender;
     SimpleDateFormat myFormat;
+    double tmpNumber;
+    DecimalFormat df;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,22 +56,30 @@ public class MainActivity extends AppCompatActivity {
         textViewRecovered = (TextView)findViewById(R.id.textViewRecovered);
         textViewDeaths = (TextView)findViewById(R.id.textViewDeaths);
         textViewDate = (TextView)findViewById(R.id.textViewDate);
+        textViewRecoveredTitle = (TextView)findViewById(R.id.textViewRecoveredTitle);
+        textViewDeathsTitle = (TextView)findViewById(R.id.textViewDeathsTitle);
+
         btnRefresh = (Button)findViewById(R.id.btnRefresh);
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         editor = preferences.edit();
-        myFormat = new SimpleDateFormat("hh:mm aaa .. dd MMMM yyy");
+        myFormat = new SimpleDateFormat("MMMM dd, yyyy, hh:mm:ss aaa");
         myCalender = Calendar.getInstance();
         handler = new Handler() ;
         pBar = (ProgressBar) findViewById(R.id.pBar);
         pBar.setVisibility(View.VISIBLE);
-        refreshData();
+
+        df = new DecimalFormat("0.00");
 
         if(preferences.getString("textViewCases", null) != null ){
             textViewCases.setText(preferences.getString("textViewCases", null));
             textViewRecovered.setText(preferences.getString("textViewRecovered", null));
             textViewDeaths.setText(preferences.getString("textViewDeaths", null));
             textViewDate.setText(preferences.getString("textViewDate", null));
+
+            calculate_percentages();
         }
+
+        refreshData();
 
         btnRefresh.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_info:
                 new AlertDialog.Builder(this)
-                        .setTitle("Corona Monitor")
+                        .setTitle("Corona COVID-19 Monitor")
                         .setCancelable(true)
                         .setMessage("Coronavirus live updates are retrieved from\n\n" +
                                 "https://www.worldometers.info/coronavirus\n" +
@@ -109,56 +121,83 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    void calculate_percentages () {
+        tmpNumber = Double.parseDouble(textViewRecovered.getText().toString().replaceAll(",", ""))
+                / Double.parseDouble(textViewCases.getText().toString().replaceAll(",", ""))
+                * 100;
+        textViewRecoveredTitle.setText("Total Recovered  " + df.format(tmpNumber) + "%");
+
+        tmpNumber = Double.parseDouble(textViewDeaths.getText().toString().replaceAll(",", ""))
+                / Double.parseDouble(textViewCases.getText().toString().replaceAll(",", ""))
+                * 100 ;
+        textViewDeathsTitle.setText("Total Deaths  " + df.format(tmpNumber) + "%");
+    }
+
     void refreshData() {
         new Thread(new Runnable(){
             @Override
             public void run() {
                 try {
                     doc = null; // Fetches the HTML document
-                    try {
-                        doc = Jsoup.connect(url).timeout(5000).get();
-                        title = doc.title();
-                        body = doc.body().text();
-                        Log.e("TITLE", title);
-                        Log.e("BODY", body);
-                        runOnUiThread(new Runnable() {
+                    doc = Jsoup.connect(url).timeout(10000).get();
+                    title = doc.title();
+                    body = doc.body().text();
+                    //Log.e("BODY", body);
+                    runOnUiThread(new Runnable() {
 
-                            @Override
-                            public void run() {
-                                p = Pattern.compile("-?\\d+,\\d+");
-                                m = p.matcher(title);
-                                m.find();
-                                textViewCases.setText(m.group());
-                                m.find();
-                                textViewDeaths.setText(m.group());
-                                // Recovered: 51,202
-                                p1 = Pattern.compile("-?Recovered: \\d+,\\d+");
-                                m = p1.matcher(body);
-                                m.find();
-                                tmpString = m.group();
-                                Log.e("tmpString", tmpString);
-                                m = p.matcher(tmpString);
-                                m.find();
-                                textViewRecovered.setText(m.group());
-                                pBar.setVisibility(View.GONE);
-                                textViewDate.setText("Updated: " + myFormat.format(myCalender.getTime()));
+                        @Override
+                        public void run() {
+                            // Cases: 98,061
+                            p = Pattern.compile("-?\\d+,\\d+");
+                            p1 = Pattern.compile("-?Cases: \\d+,\\d+");
+                            m = p1.matcher(body);
+                            m.find();
+                            tmpString = m.group();
+                            m = p.matcher(tmpString);
+                            m.find();
+                            textViewCases.setText(m.group());
+                            // Deaths: 3,356
+                            p1 = Pattern.compile("-?Deaths: \\d+,\\d+");
+                            m = p1.matcher(body);
+                            m.find();
+                            tmpString = m.group();
+                            m = p.matcher(tmpString);
+                            m.find();
+                            textViewDeaths.setText(m.group());
+                            // Recovered: 51,202
+                            p1 = Pattern.compile("-?Recovered: \\d+,\\d+");
+                            m = p1.matcher(body);
+                            m.find();
+                            tmpString = m.group();
+                            m = p.matcher(tmpString);
+                            m.find();
+                            textViewRecovered.setText(m.group());
 
-                                // save results
-                                editor.putString("textViewCases", textViewCases.getText().toString());
-                                editor.putString("textViewRecovered", textViewRecovered.getText().toString());
-                                editor.putString("textViewDeaths", textViewDeaths.getText().toString());
-                                editor.putString("textViewDate", textViewDate.getText().toString());
-                                editor.apply();
-                            }
-                        });
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        Toast.makeText(MainActivity.this, "Network Connection Error!",
-                                Toast.LENGTH_LONG).show();
-                    }
+                            calculate_percentages();
+
+                            pBar.setVisibility(View.GONE);
+                            textViewDate.setText("Last updated: " + myFormat.format(myCalender.getTime()));
+
+                            // save results
+                            editor.putString("textViewCases", textViewCases.getText().toString());
+                            editor.putString("textViewRecovered", textViewRecovered.getText().toString());
+                            editor.putString("textViewDeaths", textViewDeaths.getText().toString());
+                            editor.putString("textViewDate", textViewDate.getText().toString());
+                            editor.apply();
+                        }
+                    });
                 }
                 catch (Exception ex) {
                     ex.printStackTrace();
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "Network Connection Error!",
+                                            Toast.LENGTH_LONG).show();
+                            pBar.setVisibility(View.GONE);
+                        }
+                    });
                 }
             }
         }).start();

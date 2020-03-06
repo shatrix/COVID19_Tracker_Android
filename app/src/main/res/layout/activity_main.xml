@@ -85,7 +85,7 @@
             android:layout_marginBottom="5dp"
             android:orientation="vertical" >
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/textViewRecoveredTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
@@ -123,7 +123,7 @@
             android:layout_marginBottom="5dp"
             android:orientation="vertical" >
             <TextView
-                android:id="@+id/textView4"
+                android:id="@+id/textViewDeathsTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
