@@ -206,52 +206,53 @@
                 android:orientation="horizontal"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
+                android:weightSum="5"
                 android:background="@drawable/back_list_item" >
 
                 <TextView
                     android:id="@+id/colCountryNameHEAD"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="1.4"
                     android:padding="2dp"
                     android:textStyle="bold"
-                    android:textSize="11dp"
+                    android:textSize="12dp"
                     android:textColor="#006381"
                     android:text="Country" >
                 </TextView>
 
                 <TextView
                     android:id="@+id/colCasesHEAD"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="1.2"
                     android:padding="2dp"
                     android:textStyle="bold"
-                    android:textSize="11dp"
+                    android:textSize="12dp"
                     android:textColor="#006381"
                     android:text="Cases" >
                 </TextView>
 
                 <TextView
                     android:id="@+id/colRecoveredHEAD"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="1.2"
                     android:padding="2dp"
                     android:textStyle="bold"
-                    android:textSize="11dp"
+                    android:textSize="12dp"
                     android:textColor="#5A9100"
                     android:text="Recovered" >
                 </TextView>
 
                 <TextView
                     android:id="@+id/colDeathsHEAD"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="1.2"
                     android:padding="2dp"
                     android:textStyle="bold"
-                    android:textSize="11dp"
+                    android:textSize="12dp"
                     android:textColor="#9a0000"
                     android:text="Deaths" >
                 </TextView>

@@ -1,11 +1,9 @@
 package com.shatrix.coronatracker;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.os.Handler;
@@ -18,9 +16,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.lang.reflect.Array;
 import java.text.DecimalFormat;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,10 +33,10 @@ public class MainActivity extends AppCompatActivity {
     Handler handler;
     public ProgressBar pBar;
     String url = "https://www.worldometers.info/coronavirus/";
-    String body, tmpString, tmpCountry, tmpCases, tmpRecovered, tmpDeaths;
+    String body, tmpString, tmpCountry, tmpCases, tmpRecovered, tmpDeaths, tmpPercentage;
     Document doc;
-    Element table;
-    Elements rows;
+    Element countriesTable;
+    Elements countriesRows;
     Pattern p, p1;
     Matcher m;
     SharedPreferences preferences;
@@ -48,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     Calendar myCalender;
     SimpleDateFormat myFormat;
     double tmpNumber;
-    DecimalFormat df;
+    DecimalFormat generalDecimalFormat;
     ListView listViewCountries;
     ListCountriesAdapter listCountriesAdapter;
     List<String> countriesNames;
@@ -78,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         pBar = (ProgressBar) findViewById(R.id.pBar);
         pBar.setVisibility(View.VISIBLE);
 
-        df = new DecimalFormat("0.00");
+        generalDecimalFormat = new DecimalFormat("0.00");
 
         if(preferences.getString("textViewCases", null) != null ){
             textViewCases.setText(preferences.getString("textViewCases", null));
@@ -133,12 +129,12 @@ public class MainActivity extends AppCompatActivity {
         tmpNumber = Double.parseDouble(textViewRecovered.getText().toString().replaceAll(",", ""))
                 / Double.parseDouble(textViewCases.getText().toString().replaceAll(",", ""))
                 * 100;
-        textViewRecoveredTitle.setText("Total Recovered  " + df.format(tmpNumber) + "%");
+        textViewRecoveredTitle.setText("Total Recovered  " + generalDecimalFormat.format(tmpNumber) + "%");
 
         tmpNumber = Double.parseDouble(textViewDeaths.getText().toString().replaceAll(",", ""))
                 / Double.parseDouble(textViewCases.getText().toString().replaceAll(",", ""))
                 * 100 ;
-        textViewDeathsTitle.setText("Total Deaths  " + df.format(tmpNumber) + "%");
+        textViewDeathsTitle.setText("Total Deaths  " + generalDecimalFormat.format(tmpNumber) + "%");
     }
 
     void refreshData() {
@@ -148,50 +144,43 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     doc = null; // Fetches the HTML document
                     doc = Jsoup.connect(url).timeout(10000).get();
-                    body = doc.body().text();
-                    table = doc.select("table").get(0);
-                    rows = table.select("tr");
-                    //Log.e("TITLE", doc.title().toString());
-                    //Log.e("TABLE", doc.body().getElementById("main_table_countries").text());
-                    //Log.e("TABLE", table.select("tr").html());
+                    //body = doc.body().text();
+                    // table id main_table_countries
+                    countriesTable = doc.getElementById("main_table_countries");
+                    countriesRows = countriesTable.select("tr");
+                    //Log.e("TITLE", elementCases.text());
                     runOnUiThread(new Runnable() {
 
                         @Override
                         public void run() {
-                            // Cases: 98,061
-                            p = Pattern.compile("-?\\d+,\\d+");
-                            p1 = Pattern.compile("-?Cases: \\d+,\\d+");
-                            m = p1.matcher(body);
-                            m.find();
-                            tmpString = m.group();
-                            m = p.matcher(tmpString);
-                            m.find();
-                            textViewCases.setText(m.group());
-                            // Deaths: 3,356
-                            p1 = Pattern.compile("-?Deaths: \\d+,\\d+");
-                            m = p1.matcher(body);
-                            m.find();
-                            tmpString = m.group();
-                            m = p.matcher(tmpString);
-                            m.find();
-                            textViewDeaths.setText(m.group());
-                            // Recovered: 51,202
-                            p1 = Pattern.compile("-?Recovered: \\d+,\\d+");
-                            m = p1.matcher(body);
-                            m.find();
-                            tmpString = m.group();
-                            m = p.matcher(tmpString);
-                            m.find();
-                            textViewRecovered.setText(m.group());
-
-                            calculate_percentages();
-
-                            pBar.setVisibility(View.GONE);
-                            myCalender = Calendar.getInstance();
-                            textViewDate.setText("Last updated: " + myFormat.format(myCalender.getTime()));
+//                            // Cases: 98,061
+//                            p = Pattern.compile("-?\\d+,\\d+");
+//                            p1 = Pattern.compile("-?Cases: \\d+,\\d+");
+//                            m = p1.matcher(body);
+//                            m.find();
+//                            tmpString = m.group();
+//                            m = p.matcher(tmpString);
+//                            m.find();
+//                            textViewCases.setText(m.group());
+//                            // Deaths: 3,356
+//                            p1 = Pattern.compile("-?Deaths: \\d+,\\d+");
+//                            m = p1.matcher(body);
+//                            m.find();
+//                            tmpString = m.group();
+//                            m = p.matcher(tmpString);
+//                            m.find();
+//                            textViewDeaths.setText(m.group());
+//                            // Recovered: 51,202
+//                            p1 = Pattern.compile("-?Recovered: \\d+,\\d+");
+//                            m = p1.matcher(body);
+//                            m.find();
+//                            tmpString = m.group();
+//                            m = p.matcher(tmpString);
+//                            m.find();
+//                            textViewRecovered.setText(m.group());
 
                             // get countries
-                            Iterator<Element> rowIterator = rows.iterator();
+                            Iterator<Element> rowIterator = countriesRows.iterator();
                             rowIterator.next();
                             countriesNames = new ArrayList<String>();
                             numberCases = new ArrayList<String>();
@@ -202,28 +191,36 @@ public class MainActivity extends AppCompatActivity {
                                 Element row = rowIterator.next();
                                 Elements cols = row.select("td");
 
-                                if(cols.get(0).text().contains("Total"))
+                                if (cols.get(0).text().contains("Total")) {
+                                    textViewCases.setText(cols.get(1).text());
+                                    textViewRecovered.setText(cols.get(6).text());
+                                    textViewDeaths.setText(cols.get(3).text());
                                     break;
+                                }
 
-                                if(cols.get(0).hasText())
-                                    tmpCountry = cols.get(0).text();
-                                else
-                                    tmpCountry = "NA";
+                                if (cols.get(0).hasText()) {tmpCountry = cols.get(0).text();}
+                                else {tmpCountry = "NA";}
 
-                                if(cols.get(1).hasText())
-                                    tmpCases = cols.get(1).text();
-                                else
-                                    tmpCases = "0";
+                                if (cols.get(1).hasText()) {tmpCases = cols.get(1).text();}
+                                else {tmpCases = "0";}
 
-                                if(cols.get(6).hasText())
+                                if (cols.get(6).hasText()){
                                     tmpRecovered = cols.get(6).text();
-                                else
-                                    tmpRecovered = "0";
+                                    tmpPercentage = (generalDecimalFormat.format(Double.parseDouble(tmpRecovered.replaceAll(",", ""))
+                                            / Double.parseDouble(tmpCases.replaceAll(",", ""))
+                                            * 100)) + "%";
+                                    tmpRecovered = tmpRecovered + "\n" + tmpPercentage;
+                                }
+                                else {tmpRecovered = "0";}
 
-                                if(cols.get(3).hasText())
+                                if(cols.get(3).hasText()) {
                                     tmpDeaths = cols.get(3).text();
-                                else
-                                    tmpDeaths = "0";
+                                    tmpPercentage = (generalDecimalFormat.format(Double.parseDouble(tmpDeaths.replaceAll(",", ""))
+                                            / Double.parseDouble(tmpCases.replaceAll(",", ""))
+                                            * 100)) + "%";
+                                    tmpDeaths = tmpDeaths + "\n" + tmpPercentage;
+                                }
+                                else {tmpDeaths = "0";}
 
                                 countriesNames.add(tmpCountry);
                                 numberCases.add(tmpCases);
@@ -242,6 +239,12 @@ public class MainActivity extends AppCompatActivity {
                             editor.putString("textViewDeaths", textViewDeaths.getText().toString());
                             editor.putString("textViewDate", textViewDate.getText().toString());
                             editor.apply();
+
+                            calculate_percentages();
+
+                            pBar.setVisibility(View.GONE);
+                            myCalender = Calendar.getInstance();
+                            textViewDate.setText("Last updated: " + myFormat.format(myCalender.getTime()));
                         }
                     });
                 }

@@ -3,15 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:weightSum="5"
     android:background="@drawable/back_list_item" >
 
     <TextView
         android:id="@+id/colCountryName"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="1.4"
         android:padding="2dp"
-        android:textSize="10dp"
+        android:textSize="11dp"
         android:paddingLeft="5dp"
         android:textStyle="bold"
         android:textColor="#006381"
@@ -20,33 +21,33 @@
 
     <TextView
         android:id="@+id/colCases"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="1.2"
         android:padding="2dp"
-        android:textSize="10dp"
+        android:textSize="11dp"
         android:textColor="#006381"
         android:text=" " >
     </TextView>
 
     <TextView
         android:id="@+id/colRecovered"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="1.2"
         android:padding="2dp"
-        android:textSize="10dp"
+        android:textSize="11dp"
         android:textColor="#5A9100"
         android:text=" " >
     </TextView>
 
     <TextView
         android:id="@+id/colDeaths"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="1.2"
         android:padding="2dp"
-        android:textSize="10dp"
+        android:textSize="11dp"
         android:textColor="#9a0000"
         android:text=" " >
     </TextView>
