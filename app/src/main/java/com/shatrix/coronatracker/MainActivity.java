@@ -1,43 +1,46 @@
 package com.shatrix.coronatracker;
-
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.os.Handler;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import java.io.IOException;
-import java.net.SocketTimeoutException;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.lang.reflect.Array;
 import java.text.DecimalFormat;
-import java.text.ParseException;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     TextView textViewCases, textViewRecovered, textViewDeaths, textViewDate, textViewDeathsTitle, textViewRecoveredTitle ;
-    Button btnRefresh ;
     Handler handler;
     public ProgressBar pBar;
     String url = "https://www.worldometers.info/coronavirus/";
-    String title, body, tmpString;
+    String body, tmpString, tmpCountry, tmpCases, tmpRecovered, tmpDeaths;
     Document doc;
+    Element table;
+    Elements rows;
     Pattern p, p1;
     Matcher m;
     SharedPreferences preferences;
@@ -46,6 +49,12 @@ public class MainActivity extends AppCompatActivity {
     SimpleDateFormat myFormat;
     double tmpNumber;
     DecimalFormat df;
+    ListView listViewCountries;
+    ListCountriesAdapter listCountriesAdapter;
+    List<String> countriesNames;
+    List<String> numberCases;
+    List<String> numberRecovered;
+    List<String> numberDeaths;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +68,8 @@ public class MainActivity extends AppCompatActivity {
         textViewRecoveredTitle = (TextView)findViewById(R.id.textViewRecoveredTitle);
         textViewDeathsTitle = (TextView)findViewById(R.id.textViewDeathsTitle);
 
-        btnRefresh = (Button)findViewById(R.id.btnRefresh);
+        listViewCountries = (ListView)findViewById(R.id.listViewCountries);
+
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         editor = preferences.edit();
         myFormat = new SimpleDateFormat("MMMM dd, yyyy, hh:mm:ss aaa");
@@ -80,16 +90,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         refreshData();
-
-        btnRefresh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Toast.makeText(MainActivity.this, "Will be implemented later!",
-                //        Toast.LENGTH_LONG).show();
-                pBar.setVisibility(View.VISIBLE);
-                refreshData();
-            }
-        });
     }
 
     @Override
@@ -97,6 +97,11 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.mymenu, menu);
         return true;
+    }
+
+    void setListViewCountries(String[] countriesNames, String[] numberCases, String[] numberRecovered, String[] numberDeaths) {
+        listCountriesAdapter = new ListCountriesAdapter(this, countriesNames, numberCases, numberRecovered, numberDeaths);
+        listViewCountries.setAdapter(listCountriesAdapter);
     }
 
     @Override
@@ -114,7 +119,10 @@ public class MainActivity extends AppCompatActivity {
                         .setIcon(android.R.drawable.ic_dialog_info)
                         .show();
                 return true;
-
+            case R.id.action_refresh:
+                pBar.setVisibility(View.VISIBLE);
+                refreshData();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
 
@@ -140,9 +148,12 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     doc = null; // Fetches the HTML document
                     doc = Jsoup.connect(url).timeout(10000).get();
-                    title = doc.title();
                     body = doc.body().text();
-                    //Log.e("BODY", body);
+                    table = doc.select("table").get(0);
+                    rows = table.select("tr");
+                    //Log.e("TITLE", doc.title().toString());
+                    //Log.e("TABLE", doc.body().getElementById("main_table_countries").text());
+                    //Log.e("TABLE", table.select("tr").html());
                     runOnUiThread(new Runnable() {
 
                         @Override
@@ -176,7 +187,54 @@ public class MainActivity extends AppCompatActivity {
                             calculate_percentages();
 
                             pBar.setVisibility(View.GONE);
+                            myCalender = Calendar.getInstance();
                             textViewDate.setText("Last updated: " + myFormat.format(myCalender.getTime()));
+
+                            // get countries
+                            Iterator<Element> rowIterator = rows.iterator();
+                            rowIterator.next();
+                            countriesNames = new ArrayList<String>();
+                            numberCases = new ArrayList<String>();
+                            numberRecovered = new ArrayList<String>();
+                            numberDeaths = new ArrayList<String>();
+
+                            while (rowIterator.hasNext()) {
+                                Element row = rowIterator.next();
+                                Elements cols = row.select("td");
+
+                                if(cols.get(0).text().contains("Total"))
+                                    break;
+
+                                if(cols.get(0).hasText())
+                                    tmpCountry = cols.get(0).text();
+                                else
+                                    tmpCountry = "NA";
+
+                                if(cols.get(1).hasText())
+                                    tmpCases = cols.get(1).text();
+                                else
+                                    tmpCases = "0";
+
+                                if(cols.get(6).hasText())
+                                    tmpRecovered = cols.get(6).text();
+                                else
+                                    tmpRecovered = "0";
+
+                                if(cols.get(3).hasText())
+                                    tmpDeaths = cols.get(3).text();
+                                else
+                                    tmpDeaths = "0";
+
+                                countriesNames.add(tmpCountry);
+                                numberCases.add(tmpCases);
+                                numberRecovered.add(tmpRecovered);
+                                numberDeaths.add(tmpDeaths);
+                            }
+
+                            setListViewCountries(countriesNames.toArray(new String[countriesNames.size()]),
+                                    numberCases.toArray(new String[countriesNames.size()]),
+                                    numberRecovered.toArray(new String[countriesNames.size()]),
+                                    numberDeaths.toArray(new String[countriesNames.size()]));
 
                             // save results
                             editor.putString("textViewCases", textViewCases.getText().toString());
@@ -198,6 +256,9 @@ public class MainActivity extends AppCompatActivity {
                             pBar.setVisibility(View.GONE);
                         }
                     });
+                }
+                finally {
+                    doc = null;
                 }
             }
         }).start();

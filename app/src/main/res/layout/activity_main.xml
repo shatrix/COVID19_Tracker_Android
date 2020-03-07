@@ -16,17 +16,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/layoutTopHEAD"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
             android:layout_alignParentTop="true"
             android:orientation="vertical" >
             <TextView
                 android:id="@+id/textViewHEAD"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
                 android:text="Live Update for Coronavirus COVID-19 Global Cases"
                 android:textSize="14dp"
                 android:textStyle="bold"
@@ -38,13 +35,37 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/layoutTop1"
+            android:layout_below="@+id/layoutTopHEAD"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:id="@+id/layoutTopDate"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:text=" "
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textViewDate"
+                android:textSize="12dp"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#e16915" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/layoutTopCases"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
-            android:layout_marginTop="0dp"
+            android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
-            android:background="@drawable/back_time"
-            android:layout_below="@+id/layoutTopHEAD"
+            android:paddingTop="3dp"
+            android:paddingBottom="5dp"
+            android:background="@drawable/back_generic"
+            android:layout_below="@+id/layoutTopDate"
             android:orientation="vertical" >
             <TextView
                 android:id="@+id/textView1"
@@ -76,13 +97,15 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/layoutTop1"
-            android:background="@drawable/back_real"
-            android:id="@+id/layoutTop2"
+            android:layout_below="@+id/layoutTopCases"
+            android:background="@drawable/back_generic"
+            android:id="@+id/layoutTopRecovered"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
             android:layout_marginTop="0dp"
             android:layout_marginBottom="5dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="5dp"
             android:orientation="vertical" >
             <TextView
                 android:id="@+id/textViewRecoveredTitle"
@@ -114,13 +137,15 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/layoutTop2"
-            android:background="@drawable/back_real"
-            android:id="@+id/layoutTop3"
+            android:layout_below="@+id/layoutTopRecovered"
+            android:background="@drawable/back_generic"
+            android:id="@+id/layoutTopDeaths"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
             android:layout_marginTop="0dp"
             android:layout_marginBottom="5dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="5dp"
             android:orientation="vertical" >
             <TextView
                 android:id="@+id/textViewDeathsTitle"
@@ -148,25 +173,99 @@
                 android:textColor="#9a0000"
                 android:layout_gravity="center_horizontal" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/layoutTop3"
-            android:layout_marginTop="20dp"
-            android:id="@+id/layoutTop4"
-            android:orientation="horizontal" >
+            android:layout_below="@+id/layoutTopDeaths"
+            android:background="@drawable/back_generic"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="5dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:orientation="vertical" >
 
             <TextView
-                android:text=" "
+                android:text="Confirmed Cases by Country"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/textViewDate"
-                android:textSize="12dp"
+                android:id="@+id/textCountriesHeader"
+                android:textSize="14dp"
                 android:textStyle="bold"
                 android:textAlignment="center"
+                android:layout_marginBottom="5dp"
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center_horizontal"
-                android:textColor="#e16915" />
+                android:textColor="#284452" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/back_list_item" >
+
+                <TextView
+                    android:id="@+id/colCountryNameHEAD"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="2dp"
+                    android:textStyle="bold"
+                    android:textSize="11dp"
+                    android:textColor="#006381"
+                    android:text="Country" >
+                </TextView>
+
+                <TextView
+                    android:id="@+id/colCasesHEAD"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="2dp"
+                    android:textStyle="bold"
+                    android:textSize="11dp"
+                    android:textColor="#006381"
+                    android:text="Cases" >
+                </TextView>
+
+                <TextView
+                    android:id="@+id/colRecoveredHEAD"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="2dp"
+                    android:textStyle="bold"
+                    android:textSize="11dp"
+                    android:textColor="#5A9100"
+                    android:text="Recovered" >
+                </TextView>
+
+                <TextView
+                    android:id="@+id/colDeathsHEAD"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="2dp"
+                    android:textStyle="bold"
+                    android:textSize="11dp"
+                    android:textColor="#9a0000"
+                    android:text="Deaths" >
+                </TextView>
+
+            </LinearLayout>
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/layoutCountriesHeader"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="5dp"
+                android:id="@+id/listViewCountries">
+            </ListView>
 
         </LinearLayout>
 
@@ -177,33 +276,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:layout_centerHorizontal="true"
-            android:layout_above="@+id/btnRefresh"
+            android:layout_alignParentBottom="true"
             android:layout_gravity="center_horizontal"
             android:visibility="gone"/>
-
-        <Button
-            android:text="Refresh"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/blue_button"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center_horizontal"
-            style="@style/button_text"
-            android:id="@+id/btnRefresh" />
-
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#888888"
-            android:textSize="10dp"
-            android:textStyle="italic"
-            android:layout_marginLeft="6dp"
-            android:layout_marginBottom="6dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:text="Shatrix" />
 
     </RelativeLayout>
 </RelativeLayout>

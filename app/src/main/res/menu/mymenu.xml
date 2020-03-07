@@ -3,7 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/action_info"
-        android:icon="@android:drawable/ic_dialog_info"
+        android:icon="@drawable/ic_info"
         android:title="Info"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/action_refresh"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_refresh"
+        android:title="Refresh"/>
 </menu>
