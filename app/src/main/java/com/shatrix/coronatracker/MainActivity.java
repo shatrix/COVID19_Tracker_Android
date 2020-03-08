@@ -193,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 if (cols.get(0).text().contains("Total")) {
                                     textViewCases.setText(cols.get(1).text());
-                                    textViewRecovered.setText(cols.get(6).text());
+                                    textViewRecovered.setText(cols.get(5).text());
                                     textViewDeaths.setText(cols.get(3).text());
                                     break;
                                 }
@@ -204,8 +204,8 @@ public class MainActivity extends AppCompatActivity {
                                 if (cols.get(1).hasText()) {tmpCases = cols.get(1).text();}
                                 else {tmpCases = "0";}
 
-                                if (cols.get(6).hasText()){
-                                    tmpRecovered = cols.get(6).text();
+                                if (cols.get(5).hasText()){
+                                    tmpRecovered = cols.get(5).text();
                                     tmpPercentage = (generalDecimalFormat.format(Double.parseDouble(tmpRecovered.replaceAll(",", ""))
                                             / Double.parseDouble(tmpCases.replaceAll(",", ""))
                                             * 100)) + "%";
