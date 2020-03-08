@@ -24,23 +24,22 @@
                 android:id="@+id/textViewHEAD"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Live Update for Coronavirus COVID-19 Global Cases"
+                android:text="COVID-19 CORONAVIRUS Latest Global Updates"
+                android:textSize="16dp"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:textColor="@color/colorTitles"
+                android:layout_gravity="center_horizontal" />
+            <TextView
+                android:id="@+id/textViewHEADSource"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Source: https://www.worldometers.info/coronavirus"
                 android:textSize="14dp"
                 android:textStyle="bold"
                 android:textAlignment="center"
-                android:textColor="#284452"
+                android:textColor="@color/colorTitles"
                 android:layout_gravity="center_horizontal" />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/layoutTopHEAD"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:id="@+id/layoutTopDate"
-            android:orientation="horizontal" >
-
             <TextView
                 android:text=" "
                 android:layout_width="match_parent"
@@ -51,7 +50,7 @@
                 android:textAlignment="center"
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center_horizontal"
-                android:textColor="#e16915" />
+                android:textColor="@color/colorHighlights" />
 
         </LinearLayout>
         <LinearLayout
@@ -65,7 +64,7 @@
             android:paddingTop="3dp"
             android:paddingBottom="5dp"
             android:background="@drawable/back_generic"
-            android:layout_below="@+id/layoutTopDate"
+            android:layout_below="@+id/layoutTopHEAD"
             android:orientation="vertical" >
             <TextView
                 android:id="@+id/textView1"
@@ -73,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:text="Total Confirmed Cases"
-                android:textColor="#006381"
+                android:textColor="@color/colorBlueDark"
                 android:textSize="18dp"
                 android:textAlignment="center"
                 android:textStyle="bold"
@@ -83,14 +82,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/textViewCases"
-                android:textSize="35dp"
+                android:textSize="30dp"
                 android:textAlignment="center"
-                android:shadowColor="#777777"
+                android:shadowColor="@color/colorShadow"
                 android:shadowDx="0"
                 android:shadowDy="2"
                 android:shadowRadius="1"
                 android:textStyle="bold"
-                android:textColor="#006381"
+                android:textColor="@color/colorBlueDark"
                 android:layout_gravity="center_horizontal" />
         </LinearLayout>
 
@@ -113,7 +112,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:text="Total Recovered"
-                android:textColor="#5A9100"
+                android:textColor="@color/colorGreenDark"
                 android:textSize="18dp"
                 android:textAlignment="center"
                 android:textStyle="bold"
@@ -123,14 +122,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/textViewRecovered"
-                android:textSize="35dp"
-                android:shadowColor="#777777"
+                android:textSize="30dp"
+                android:shadowColor="@color/colorShadow"
                 android:shadowDx="0"
                 android:shadowDy="2"
                 android:shadowRadius="1"
                 android:textAlignment="center"
                 android:textStyle="bold"
-                android:textColor="#5A9100"
+                android:textColor="@color/colorGreenDark"
                 android:layout_gravity="center_horizontal" />
         </LinearLayout>
 
@@ -153,7 +152,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:text="Total Deaths"
-                android:textColor="#9a0000"
+                android:textColor="@color/colorRedDark"
                 android:textSize="18dp"
                 android:textAlignment="center"
                 android:textStyle="bold"
@@ -163,14 +162,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/textViewDeaths"
-                android:textSize="35dp"
-                android:shadowColor="#777777"
+                android:textSize="30dp"
+                android:shadowColor="@color/colorShadow"
                 android:shadowDx="0"
                 android:shadowDy="2"
                 android:shadowRadius="1"
                 android:textAlignment="center"
                 android:textStyle="bold"
-                android:textColor="#9a0000"
+                android:textColor="@color/colorRedDark"
                 android:layout_gravity="center_horizontal" />
         </LinearLayout>
 
@@ -192,13 +191,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/textCountriesHeader"
-                android:textSize="14dp"
+                android:textSize="16dp"
                 android:textStyle="bold"
                 android:textAlignment="center"
                 android:layout_marginBottom="5dp"
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center_horizontal"
-                android:textColor="#284452" />
+                android:textColor="@color/colorTitles" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -214,10 +213,14 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.4"
-                    android:padding="2dp"
+                    android:paddingRight="4dp"
+                    android:paddingLeft="4dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp"
                     android:textStyle="bold"
-                    android:textSize="12dp"
-                    android:textColor="#006381"
+                    android:textSize="14dp"
+                    android:textColor="@color/colorBlueDark"
+                    android:background="@drawable/back_list_cell"
                     android:text="Country" >
                 </TextView>
 
@@ -228,8 +231,12 @@
                     android:layout_weight="1.2"
                     android:padding="2dp"
                     android:textStyle="bold"
-                    android:textSize="12dp"
-                    android:textColor="#006381"
+                    android:textSize="14dp"
+                    android:textAlignment="center"
+                    android:gravity="center_horizontal"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="@color/colorBlueDark"
+                    android:background="@drawable/back_list_cell"
                     android:text="Cases" >
                 </TextView>
 
@@ -240,8 +247,12 @@
                     android:layout_weight="1.2"
                     android:padding="2dp"
                     android:textStyle="bold"
-                    android:textSize="12dp"
-                    android:textColor="#5A9100"
+                    android:textSize="14dp"
+                    android:textAlignment="center"
+                    android:gravity="center_horizontal"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="@color/colorGreenDark"
+                    android:background="@drawable/back_list_cell"
                     android:text="Recovered" >
                 </TextView>
 
@@ -252,8 +263,12 @@
                     android:layout_weight="1.2"
                     android:padding="2dp"
                     android:textStyle="bold"
-                    android:textSize="12dp"
-                    android:textColor="#9a0000"
+                    android:textSize="14dp"
+                    android:textAlignment="center"
+                    android:gravity="center_horizontal"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="@color/colorRedDark"
+                    android:background="@drawable/back_list_cell"
                     android:text="Deaths" >
                 </TextView>
 
@@ -264,7 +279,10 @@
                 android:layout_height="match_parent"
                 android:layout_below="@+id/layoutCountriesHeader"
                 android:layout_centerHorizontal="true"
-                android:layout_margin="5dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="2dp"
                 android:id="@+id/listViewCountries">
             </ListView>
 

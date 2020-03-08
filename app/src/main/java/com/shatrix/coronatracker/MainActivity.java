@@ -1,5 +1,6 @@
 package com.shatrix.coronatracker;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,9 +16,10 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import android.content.SharedPreferences;
@@ -35,8 +37,8 @@ public class MainActivity extends AppCompatActivity {
     String url = "https://www.worldometers.info/coronavirus/";
     String body, tmpString, tmpCountry, tmpCases, tmpRecovered, tmpDeaths, tmpPercentage;
     Document doc;
-    Element countriesTable;
-    Elements countriesRows;
+    Element countriesTable, row;
+    Elements countriesRows, cols;
     Pattern p, p1;
     Matcher m;
     SharedPreferences preferences;
@@ -45,12 +47,14 @@ public class MainActivity extends AppCompatActivity {
     SimpleDateFormat myFormat;
     double tmpNumber;
     DecimalFormat generalDecimalFormat;
+    DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
     ListView listViewCountries;
     ListCountriesAdapter listCountriesAdapter;
     List<String> countriesNames;
     List<String> numberCases;
     List<String> numberRecovered;
     List<String> numberDeaths;
+    int colNumCountry, colNumCases, colNumRecovered, colNumDeaths;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,15 +70,17 @@ public class MainActivity extends AppCompatActivity {
 
         listViewCountries = (ListView)findViewById(R.id.listViewCountries);
 
+        colNumCountry = 0; colNumCases = 1; colNumRecovered = 0; colNumDeaths = 0;
+
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         editor = preferences.edit();
-        myFormat = new SimpleDateFormat("MMMM dd, yyyy, hh:mm:ss aaa");
+        myFormat = new SimpleDateFormat("MMMM dd, yyyy, hh:mm:ss aaa", Locale.US);
         myCalender = Calendar.getInstance();
         handler = new Handler() ;
         pBar = (ProgressBar) findViewById(R.id.pBar);
         pBar.setVisibility(View.VISIBLE);
 
-        generalDecimalFormat = new DecimalFormat("0.00");
+        generalDecimalFormat = new DecimalFormat("0.00", symbols);
 
         if(preferences.getString("textViewCases", null) != null ){
             textViewCases.setText(preferences.getString("textViewCases", null));
@@ -107,12 +113,15 @@ public class MainActivity extends AppCompatActivity {
                 new AlertDialog.Builder(this)
                         .setTitle("Corona COVID-19 Monitor")
                         .setCancelable(true)
-                        .setMessage("Coronavirus live updates are retrieved from\n\n" +
-                                "https://www.worldometers.info/coronavirus\n" +
+                        .setMessage("COVID-19 CORONAVIRUS Latest Global Updates\n\n" +
+                                "Numbers are based on:\nhttps://www.worldometers.info/coronavirus\n" +
                                 "\n\n" +
-                                "Developed by Shatrix")
+                                "Developer: Sherif Mousa (Shatrix)" +
+                                "\n" +
+                                "\n" +
+                                "Github,LinkedIn,Facebook,Twitter @shatrix")
                         .setPositiveButton("Close", null)
-                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .setIcon(R.drawable.ic_info)
                         .show();
                 return true;
             case R.id.action_refresh:
@@ -129,12 +138,12 @@ public class MainActivity extends AppCompatActivity {
         tmpNumber = Double.parseDouble(textViewRecovered.getText().toString().replaceAll(",", ""))
                 / Double.parseDouble(textViewCases.getText().toString().replaceAll(",", ""))
                 * 100;
-        textViewRecoveredTitle.setText("Total Recovered  " + generalDecimalFormat.format(tmpNumber) + "%");
+        textViewRecoveredTitle.setText("Total Recovered   " + generalDecimalFormat.format(tmpNumber) + "%");
 
         tmpNumber = Double.parseDouble(textViewDeaths.getText().toString().replaceAll(",", ""))
                 / Double.parseDouble(textViewCases.getText().toString().replaceAll(",", ""))
                 * 100 ;
-        textViewDeathsTitle.setText("Total Deaths  " + generalDecimalFormat.format(tmpNumber) + "%");
+        textViewDeathsTitle.setText("Total Deaths   " + generalDecimalFormat.format(tmpNumber) + "%");
     }
 
     void refreshData() {
@@ -153,59 +162,48 @@ public class MainActivity extends AppCompatActivity {
 
                         @Override
                         public void run() {
-//                            // Cases: 98,061
-//                            p = Pattern.compile("-?\\d+,\\d+");
-//                            p1 = Pattern.compile("-?Cases: \\d+,\\d+");
-//                            m = p1.matcher(body);
-//                            m.find();
-//                            tmpString = m.group();
-//                            m = p.matcher(tmpString);
-//                            m.find();
-//                            textViewCases.setText(m.group());
-//                            // Deaths: 3,356
-//                            p1 = Pattern.compile("-?Deaths: \\d+,\\d+");
-//                            m = p1.matcher(body);
-//                            m.find();
-//                            tmpString = m.group();
-//                            m = p.matcher(tmpString);
-//                            m.find();
-//                            textViewDeaths.setText(m.group());
-//                            // Recovered: 51,202
-//                            p1 = Pattern.compile("-?Recovered: \\d+,\\d+");
-//                            m = p1.matcher(body);
-//                            m.find();
-//                            tmpString = m.group();
-//                            m = p.matcher(tmpString);
-//                            m.find();
-//                            textViewRecovered.setText(m.group());
-
                             // get countries
                             Iterator<Element> rowIterator = countriesRows.iterator();
-                            rowIterator.next();
+                            //rowIterator.next();
                             countriesNames = new ArrayList<String>();
                             numberCases = new ArrayList<String>();
                             numberRecovered = new ArrayList<String>();
                             numberDeaths = new ArrayList<String>();
 
+                            // read table header and find correct column number for each category
+                            row = rowIterator.next();
+                            cols = row.select("th");
+                            //Log.e("COLS: ", cols.text());
+                            if (cols.get(0).text().contains("Country")) {
+                                for(int i=1; i < cols.size(); i++){
+                                    if (cols.get(i).text().contains("Total") && cols.get(i).text().contains("Cases"))
+                                        {colNumCases = i; Log.e("Cases: ", cols.get(i).text());}
+                                    else if (cols.get(i).text().contains("Total") && cols.get(i).text().contains("Recovered"))
+                                        {colNumRecovered = i; Log.e("Recovered: ", cols.get(i).text());}
+                                    else if (cols.get(i).text().contains("Total") && cols.get(i).text().contains("Deaths"))
+                                        {colNumDeaths = i; Log.e("Deaths: ", cols.get(i).text());}
+                                }
+                            }
+
                             while (rowIterator.hasNext()) {
-                                Element row = rowIterator.next();
-                                Elements cols = row.select("td");
+                                row = rowIterator.next();
+                                cols = row.select("td");
 
                                 if (cols.get(0).text().contains("Total")) {
-                                    textViewCases.setText(cols.get(1).text());
-                                    textViewRecovered.setText(cols.get(5).text());
-                                    textViewDeaths.setText(cols.get(3).text());
+                                    textViewCases.setText(cols.get(colNumCases).text());
+                                    textViewRecovered.setText(cols.get(colNumRecovered).text());
+                                    textViewDeaths.setText(cols.get(colNumDeaths).text());
                                     break;
                                 }
 
-                                if (cols.get(0).hasText()) {tmpCountry = cols.get(0).text();}
+                                if (cols.get(colNumCountry).hasText()) {tmpCountry = cols.get(0).text();}
                                 else {tmpCountry = "NA";}
 
-                                if (cols.get(1).hasText()) {tmpCases = cols.get(1).text();}
+                                if (cols.get(colNumCases).hasText()) {tmpCases = cols.get(colNumCases).text();}
                                 else {tmpCases = "0";}
 
-                                if (cols.get(5).hasText()){
-                                    tmpRecovered = cols.get(5).text();
+                                if (cols.get(colNumRecovered).hasText()){
+                                    tmpRecovered = cols.get(colNumRecovered).text();
                                     tmpPercentage = (generalDecimalFormat.format(Double.parseDouble(tmpRecovered.replaceAll(",", ""))
                                             / Double.parseDouble(tmpCases.replaceAll(",", ""))
                                             * 100)) + "%";
@@ -213,8 +211,8 @@ public class MainActivity extends AppCompatActivity {
                                 }
                                 else {tmpRecovered = "0";}
 
-                                if(cols.get(3).hasText()) {
-                                    tmpDeaths = cols.get(3).text();
+                                if(cols.get(colNumDeaths).hasText()) {
+                                    tmpDeaths = cols.get(colNumDeaths).text();
                                     tmpPercentage = (generalDecimalFormat.format(Double.parseDouble(tmpDeaths.replaceAll(",", ""))
                                             / Double.parseDouble(tmpCases.replaceAll(",", ""))
                                             * 100)) + "%";
@@ -267,3 +265,29 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 }
+
+//                            // Cases: 98,061
+//                            p = Pattern.compile("-?\\d+,\\d+");
+//                            p1 = Pattern.compile("-?Cases: \\d+,\\d+");
+//                            m = p1.matcher(body);
+//                            m.find();
+//                            tmpString = m.group();
+//                            m = p.matcher(tmpString);
+//                            m.find();
+//                            textViewCases.setText(m.group());
+//                            // Deaths: 3,356
+//                            p1 = Pattern.compile("-?Deaths: \\d+,\\d+");
+//                            m = p1.matcher(body);
+//                            m.find();
+//                            tmpString = m.group();
+//                            m = p.matcher(tmpString);
+//                            m.find();
+//                            textViewDeaths.setText(m.group());
+//                            // Recovered: 51,202
+//                            p1 = Pattern.compile("-?Recovered: \\d+,\\d+");
+//                            m = p1.matcher(body);
+//                            m.find();
+//                            tmpString = m.group();
+//                            m = p.matcher(tmpString);
+//                            m.find();
+//                            textViewRecovered.setText(m.group());
