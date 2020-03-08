@@ -17,6 +17,9 @@
                 android:id="@+id/layoutTopHEAD"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:descendantFocusability="beforeDescendants"
+                android:focusableInTouchMode="true"
+                android:focusable="true"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
                 android:orientation="vertical">
@@ -214,7 +217,6 @@
                     <EditText
                         android:layout_width="fill_parent"
                         android:id="@+id/textSearchBox"
-                        android:background="@drawable/back_search_text"
                         android:textSize="14dp"
                         android:maxLines="1"
                         android:inputType="text"
@@ -222,6 +224,7 @@
                         android:paddingRight="3dp"
                         android:paddingBottom="1dp"
                         android:paddingTop="1dp"
+                        android:background="@drawable/back_search_text"
                         android:hint="Search here by Country name"
                         android:textColor="@color/colorBlueDark"
                         android:layout_height="wrap_content" />

@@ -18,6 +18,7 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -59,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
     int colNumCountry, colNumCases, colNumRecovered, colNumDeaths;
     SwipeRefreshLayout mySwipeRefreshLayout;
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -168,11 +168,14 @@ public class MainActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
             }
         });
+        textSearchBox.clearFocus();
+        textSearchBox.setFocusableInTouchMode(true);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        textSearchBox.clearFocus();
         // Call refreshData once the app is opened or resumed from background
         refreshData();
     }
@@ -341,7 +344,11 @@ public class MainActivity extends AppCompatActivity {
                 finally {
                     doc = null;
                 }
-                mySwipeRefreshLayout.setRefreshing(false);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mySwipeRefreshLayout.setRefreshing(false);
+                    }});
             }
         }).start();
     }
