@@ -15,5 +15,6 @@
     <color name="colorHighlights">#e16915</color>
     <color name="colorStrokeDark">#d7dddf</color>
     <color name="colorStrokeLight">#e9eff2</color>
+    <color name="colorStrokeSearch">#b9bfc1</color>
     <color name="colorShadow">#878787</color>
 </resources>

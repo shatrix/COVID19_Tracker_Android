@@ -2,18 +2,19 @@ package com.shatrix.coronatracker;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AbsListView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.os.Handler;
 import android.widget.Toast;
-
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,20 +33,18 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.List;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     TextView textViewCases, textViewRecovered, textViewDeaths, textViewDate, textViewDeathsTitle, textViewRecoveredTitle ;
+    EditText textSearchBox;
     Handler handler;
     String url = "https://www.worldometers.info/coronavirus/";
-    String body, tmpString, tmpCountry, tmpCases, tmpRecovered, tmpDeaths, tmpPercentage;
+    String tmpCountry, tmpCases, tmpRecovered, tmpDeaths, tmpPercentage;
     Document doc;
     Element countriesTable, row;
     Elements countriesRows, cols;
-    Pattern p, p1;
-    Matcher m;
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
     Calendar myCalender;
@@ -55,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
     ListView listViewCountries;
     ListCountriesAdapter listCountriesAdapter;
-    ArrayList<CountryLine> allCountriesResults = new ArrayList<CountryLine>();
+    ArrayList<CountryLine> allCountriesResults, FilteredArrList;
     Intent sharingIntent;
     int colNumCountry, colNumCases, colNumRecovered, colNumDeaths;
     SwipeRefreshLayout mySwipeRefreshLayout;
@@ -74,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         textViewRecoveredTitle = (TextView)findViewById(R.id.textViewRecoveredTitle);
         textViewDeathsTitle = (TextView)findViewById(R.id.textViewDeathsTitle);
         listViewCountries = (ListView)findViewById(R.id.listViewCountries);
+        textSearchBox = (EditText)findViewById(R.id.textSearchBox);
         colNumCountry = 0; colNumCases = 1; colNumRecovered = 0; colNumDeaths = 0;
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         editor = preferences.edit();
@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
         myCalender = Calendar.getInstance();
         handler = new Handler() ;
         generalDecimalFormat = new DecimalFormat("0.00", symbols);
+        allCountriesResults = new ArrayList<CountryLine>();
 
         // Implement Swipe to Refresh
         mySwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.coronaMainSwipeRefresh);
@@ -123,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
                 return listViewCountries.getChildAt(0).getTop() == 0;
             }
         });
-        listViewCountries.setTextFilterEnabled(true);
 
         // fetch previously saved data in SharedPreferences, if any
         if(preferences.getString("textViewCases", null) != null ){
@@ -133,6 +133,41 @@ public class MainActivity extends AppCompatActivity {
             textViewDate.setText(preferences.getString("textViewDate", null));
             calculate_percentages();
         }
+
+        // Add Text Change Listener to textSearchBox to filter by Country
+        textSearchBox.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence searchSequense, int start, int before, int count) {
+                ArrayList<CountryLine> FilteredArrList = new ArrayList<CountryLine>();
+                if (searchSequense == null || searchSequense.length() == 0) {
+                    // back to original
+                    setListViewCountries(allCountriesResults);
+                } else {
+                    searchSequense = searchSequense.toString().toLowerCase();
+                    for (int i = 0; i < allCountriesResults.size(); i++) {
+                        String data = allCountriesResults.get(i).countryName;
+                        if (data.toLowerCase().startsWith(searchSequense.toString())) {
+                            FilteredArrList.add(new CountryLine(
+                                    allCountriesResults.get(i).countryName,
+                                    allCountriesResults.get(i).cases,
+                                    allCountriesResults.get(i).recovered,
+                                    allCountriesResults.get(i).deaths));
+                        }
+                    }
+                    // set the Filtered result to return
+                    setListViewCountries(FilteredArrList);
+                }
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count,int after) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
     }
 
     @Override
@@ -151,7 +186,6 @@ public class MainActivity extends AppCompatActivity {
 
     void setListViewCountries(ArrayList<CountryLine> allCountriesResults) {
         listCountriesAdapter = new ListCountriesAdapter(this, allCountriesResults);
-        //listCountriesAdapter.getFilter().filter("E");
         listViewCountries.setAdapter(listCountriesAdapter);
     }
 
@@ -163,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
                         .setTitle("Corona COVID-19 Monitor")
                         .setCancelable(true)
                         .setMessage("COVID-19 CORONAVIRUS Latest Global Updates\n\n" +
-                                "Numbers are based on:\nhttps://www.worldometers.info/coronavirus\n" +
+                                "Source:\nhttps://www.worldometers.info/coronavirus\n" +
                                 "\n\n" +
                                 "Developer: Sherif Mousa (Shatrix)" +
                                 "\n" +
@@ -210,7 +244,6 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     doc = null; // Fetches the HTML document
                     doc = Jsoup.connect(url).timeout(10000).get();
-                    //body = doc.body().text();
                     // table id main_table_countries
                     countriesTable = doc.getElementById("main_table_countries");
                     countriesRows = countriesTable.select("tr");
@@ -221,7 +254,6 @@ public class MainActivity extends AppCompatActivity {
                         public void run() {
                             // get countries
                             Iterator<Element> rowIterator = countriesRows.iterator();
-                            //rowIterator.next();
                             allCountriesResults = new ArrayList<CountryLine>();
 
                             // read table header and find correct column number for each category
@@ -278,6 +310,8 @@ public class MainActivity extends AppCompatActivity {
                             }
 
                             setListViewCountries(allCountriesResults);
+                            textSearchBox.setText(null);
+                            textSearchBox.clearFocus();
 
                             // save results
                             editor.putString("textViewCases", textViewCases.getText().toString());

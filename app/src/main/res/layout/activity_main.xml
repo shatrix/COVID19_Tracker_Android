@@ -29,7 +29,7 @@
                     android:text="COVID-19 CORONAVIRUS Latest Global Updates"
                     android:textAlignment="center"
                     android:textColor="@color/colorTitles"
-                    android:textSize="16dp"
+                    android:textSize="15dp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -40,7 +40,7 @@
                     android:text="Source: https://www.worldometers.info/coronavirus"
                     android:textAlignment="center"
                     android:textColor="@color/colorTitles"
-                    android:textSize="14dp"
+                    android:textSize="12dp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -52,7 +52,7 @@
                     android:text=" "
                     android:textAlignment="center"
                     android:textColor="@color/colorHighlights"
-                    android:textSize="12dp"
+                    android:textSize="10dp"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -62,7 +62,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:layout_marginTop="5dp"
                 android:layout_marginRight="5dp"
                 android:layout_marginBottom="5dp"
                 android:background="@drawable/back_generic"
@@ -79,7 +78,7 @@
                     android:text="Total Confirmed Cases"
                     android:textAlignment="center"
                     android:textColor="@color/colorBlueDark"
-                    android:textSize="18dp"
+                    android:textSize="16dp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -94,7 +93,7 @@
                     android:text="00000"
                     android:textAlignment="center"
                     android:textColor="@color/colorBlueDark"
-                    android:textSize="30dp"
+                    android:textSize="26dp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -120,7 +119,7 @@
                     android:text="Total Recovered"
                     android:textAlignment="center"
                     android:textColor="@color/colorGreenDark"
-                    android:textSize="18dp"
+                    android:textSize="16dp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -135,7 +134,7 @@
                     android:text="00000"
                     android:textAlignment="center"
                     android:textColor="@color/colorGreenDark"
-                    android:textSize="30dp"
+                    android:textSize="26dp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -161,7 +160,7 @@
                     android:text="Total Deaths"
                     android:textAlignment="center"
                     android:textColor="@color/colorRedDark"
-                    android:textSize="18dp"
+                    android:textSize="16dp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -176,7 +175,7 @@
                     android:text="00000"
                     android:textAlignment="center"
                     android:textColor="@color/colorRedDark"
-                    android:textSize="30dp"
+                    android:textSize="26dp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -204,6 +203,29 @@
                     android:textColor="@color/colorTitles"
                     android:textSize="16dp"
                     android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="1dp"
+                    android:orientation="horizontal">
+                    <EditText
+                        android:layout_width="fill_parent"
+                        android:id="@+id/textSearchBox"
+                        android:background="@drawable/back_search_text"
+                        android:textSize="14dp"
+                        android:maxLines="1"
+                        android:inputType="text"
+                        android:paddingLeft="3dp"
+                        android:paddingRight="3dp"
+                        android:paddingBottom="1dp"
+                        android:paddingTop="1dp"
+                        android:hint="Search here by Country name"
+                        android:textColor="@color/colorBlueDark"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
