@@ -1,4 +1,5 @@
 package com.shatrix.coronatracker;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     List<String> numberCases;
     List<String> numberRecovered;
     List<String> numberDeaths;
+    Intent sharingIntent;
     int colNumCountry, colNumCases, colNumRecovered, colNumDeaths;
 
     @Override
@@ -127,6 +129,14 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_refresh:
                 pBar.setVisibility(View.VISIBLE);
                 refreshData();
+                return true;
+            case R.id.action_share:
+                sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                String shareBody = "https://play.google.com/store/apps/details?id=com.shatrix.coronatracker";
+                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Install (COVID19 Tracker) Android Application to get the latest global updates for the COVID-19 CORONAVIRUS:");
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                startActivity(Intent.createChooser(sharingIntent, "Share App Link via"));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

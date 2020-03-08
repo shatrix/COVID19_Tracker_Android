@@ -7,6 +7,11 @@
         android:title="Info"
         app:showAsAction="always" />
     <item
+        android:id="@+id/action_share"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_menu_share"
+        android:title="Refresh"/>
+    <item
         android:id="@+id/action_refresh"
         app:showAsAction="always"
         android:icon="@drawable/ic_refresh"
