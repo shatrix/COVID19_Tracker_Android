@@ -135,14 +135,12 @@ public class MainActivity extends AppCompatActivity {
             textViewDate.setText(preferences.getString("textViewDate", null));
             calculate_percentages();
         }
-
-        // Call refreshData once the app is opened
-        refreshData();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        // Call refreshData once the app is opened or resumed from background
         refreshData();
     }
 
