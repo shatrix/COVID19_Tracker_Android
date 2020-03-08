@@ -55,10 +55,7 @@ public class MainActivity extends AppCompatActivity {
     DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
     ListView listViewCountries;
     ListCountriesAdapter listCountriesAdapter;
-    List<String> countriesNames;
-    List<String> numberCases;
-    List<String> numberRecovered;
-    List<String> numberDeaths;
+    ArrayList<CountryLine> allCountriesResults = new ArrayList<CountryLine>();
     Intent sharingIntent;
     int colNumCountry, colNumCases, colNumRecovered, colNumDeaths;
     SwipeRefreshLayout mySwipeRefreshLayout;
@@ -126,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
                 return listViewCountries.getChildAt(0).getTop() == 0;
             }
         });
+        listViewCountries.setTextFilterEnabled(true);
 
         // fetch previously saved data in SharedPreferences, if any
         if(preferences.getString("textViewCases", null) != null ){
@@ -151,8 +149,9 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    void setListViewCountries(String[] countriesNames, String[] numberCases, String[] numberRecovered, String[] numberDeaths) {
-        listCountriesAdapter = new ListCountriesAdapter(this, countriesNames, numberCases, numberRecovered, numberDeaths);
+    void setListViewCountries(ArrayList<CountryLine> allCountriesResults) {
+        listCountriesAdapter = new ListCountriesAdapter(this, allCountriesResults);
+        //listCountriesAdapter.getFilter().filter("E");
         listViewCountries.setAdapter(listCountriesAdapter);
     }
 
@@ -223,10 +222,7 @@ public class MainActivity extends AppCompatActivity {
                             // get countries
                             Iterator<Element> rowIterator = countriesRows.iterator();
                             //rowIterator.next();
-                            countriesNames = new ArrayList<String>();
-                            numberCases = new ArrayList<String>();
-                            numberRecovered = new ArrayList<String>();
-                            numberDeaths = new ArrayList<String>();
+                            allCountriesResults = new ArrayList<CountryLine>();
 
                             // read table header and find correct column number for each category
                             row = rowIterator.next();
@@ -278,16 +274,10 @@ public class MainActivity extends AppCompatActivity {
                                 }
                                 else {tmpDeaths = "0";}
 
-                                countriesNames.add(tmpCountry);
-                                numberCases.add(tmpCases);
-                                numberRecovered.add(tmpRecovered);
-                                numberDeaths.add(tmpDeaths);
+                                allCountriesResults.add(new CountryLine(tmpCountry, tmpCases, tmpRecovered, tmpDeaths));
                             }
 
-                            setListViewCountries(countriesNames.toArray(new String[countriesNames.size()]),
-                                    numberCases.toArray(new String[countriesNames.size()]),
-                                    numberRecovered.toArray(new String[countriesNames.size()]),
-                                    numberDeaths.toArray(new String[countriesNames.size()]));
+                            setListViewCountries(allCountriesResults);
 
                             // save results
                             editor.putString("textViewCases", textViewCases.getText().toString());
