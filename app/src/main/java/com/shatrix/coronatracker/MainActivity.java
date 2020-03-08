@@ -170,14 +170,14 @@ public class MainActivity extends AppCompatActivity {
         });
         textSearchBox.clearFocus();
         textSearchBox.setFocusableInTouchMode(true);
+	// Call refreshData once the app is opened only one time, then user can request updates
+	refreshData();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         textSearchBox.clearFocus();
-        // Call refreshData once the app is opened or resumed from background
-        refreshData();
     }
 
     @Override
