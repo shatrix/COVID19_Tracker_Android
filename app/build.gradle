@@ -8,8 +8,8 @@ android {
         applicationId "com.shatrix.coronatracker"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 7
-        versionName "2.5"
+        versionCode 8
+        versionName "2.6"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -25,7 +25,6 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     testImplementation 'junit:junit:4.12'

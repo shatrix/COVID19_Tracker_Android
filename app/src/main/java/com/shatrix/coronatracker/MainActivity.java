@@ -1,18 +1,23 @@
 package com.shatrix.coronatracker;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.os.Handler;
-import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -34,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
 
     TextView textViewCases, textViewRecovered, textViewDeaths, textViewDate, textViewDeathsTitle, textViewRecoveredTitle ;
     Handler handler;
-    public ProgressBar pBar;
     String url = "https://www.worldometers.info/coronavirus/";
     String body, tmpString, tmpCountry, tmpCases, tmpRecovered, tmpDeaths, tmpPercentage;
     Document doc;
@@ -57,42 +61,88 @@ public class MainActivity extends AppCompatActivity {
     List<String> numberDeaths;
     Intent sharingIntent;
     int colNumCountry, colNumCases, colNumRecovered, colNumDeaths;
+    SwipeRefreshLayout mySwipeRefreshLayout;
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // All initial definitions
         textViewCases = (TextView)findViewById(R.id.textViewCases);
         textViewRecovered = (TextView)findViewById(R.id.textViewRecovered);
         textViewDeaths = (TextView)findViewById(R.id.textViewDeaths);
         textViewDate = (TextView)findViewById(R.id.textViewDate);
         textViewRecoveredTitle = (TextView)findViewById(R.id.textViewRecoveredTitle);
         textViewDeathsTitle = (TextView)findViewById(R.id.textViewDeathsTitle);
-
         listViewCountries = (ListView)findViewById(R.id.listViewCountries);
-
         colNumCountry = 0; colNumCases = 1; colNumRecovered = 0; colNumDeaths = 0;
-
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         editor = preferences.edit();
         myFormat = new SimpleDateFormat("MMMM dd, yyyy, hh:mm:ss aaa", Locale.US);
         myCalender = Calendar.getInstance();
         handler = new Handler() ;
-        pBar = (ProgressBar) findViewById(R.id.pBar);
-        pBar.setVisibility(View.VISIBLE);
-
         generalDecimalFormat = new DecimalFormat("0.00", symbols);
 
+        // Implement Swipe to Refresh
+        mySwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.coronaMainSwipeRefresh);
+        mySwipeRefreshLayout.setColorScheme(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+        mySwipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        refreshData();
+                    }
+                }
+        );
+
+        // fix interference between scrolling in listView & parent SwipeRefreshLayout
+        listViewCountries.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = event.getAction();
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        // Disallow ScrollView to intercept touch events.
+                        if (!listIsAtTop()) mySwipeRefreshLayout.setEnabled(false);
+                        break;
+
+                    case MotionEvent.ACTION_UP:
+                        // Allow ScrollView to intercept touch events.
+                        mySwipeRefreshLayout.setEnabled(true);
+                        break;
+                }
+
+                // Handle ListView touch events.
+                v.onTouchEvent(event);
+                return true;
+            }
+            private boolean listIsAtTop()   {
+                if(listViewCountries.getChildCount() == 0) return true;
+                return listViewCountries.getChildAt(0).getTop() == 0;
+            }
+        });
+
+        // fetch previously saved data in SharedPreferences, if any
         if(preferences.getString("textViewCases", null) != null ){
             textViewCases.setText(preferences.getString("textViewCases", null));
             textViewRecovered.setText(preferences.getString("textViewRecovered", null));
             textViewDeaths.setText(preferences.getString("textViewDeaths", null));
             textViewDate.setText(preferences.getString("textViewDate", null));
-
             calculate_percentages();
         }
 
+        // Call refreshData once the app is opened
+        refreshData();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         refreshData();
     }
 
@@ -121,20 +171,19 @@ public class MainActivity extends AppCompatActivity {
                                 "Developer: Sherif Mousa (Shatrix)" +
                                 "\n" +
                                 "\n" +
-                                "Github,LinkedIn,Facebook,Twitter @shatrix")
+                                "GitHub,LinkedIn,Facebook,Twitter @shatrix")
                         .setPositiveButton("Close", null)
                         .setIcon(R.drawable.ic_info)
                         .show();
                 return true;
             case R.id.action_refresh:
-                pBar.setVisibility(View.VISIBLE);
                 refreshData();
                 return true;
             case R.id.action_share:
                 sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
-                String shareBody = "https://play.google.com/store/apps/details?id=com.shatrix.coronatracker";
-                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Install (COVID19 Tracker) Android Application to get the latest global updates for the COVID-19 CORONAVIRUS:");
+                String shareBody = "Install (COVID19 Tracker) Android Application to get the latest global updates for the COVID-19 CORONAVIRUS: \nhttps://play.google.com/store/apps/details?id=com.shatrix.coronatracker";
+                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "CORONAVIRUS COVID19 Tracker");
                 sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
                 startActivity(Intent.createChooser(sharingIntent, "Share App Link via"));
                 return true;
@@ -157,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void refreshData() {
+        mySwipeRefreshLayout.setRefreshing(true);
         new Thread(new Runnable(){
             @Override
             public void run() {
@@ -250,7 +300,6 @@ public class MainActivity extends AppCompatActivity {
 
                             calculate_percentages();
 
-                            pBar.setVisibility(View.GONE);
                             myCalender = Calendar.getInstance();
                             textViewDate.setText("Last updated: " + myFormat.format(myCalender.getTime()));
                         }
@@ -264,40 +313,14 @@ public class MainActivity extends AppCompatActivity {
                         public void run() {
                             Toast.makeText(MainActivity.this, "Network Connection Error!",
                                             Toast.LENGTH_LONG).show();
-                            pBar.setVisibility(View.GONE);
                         }
                     });
                 }
                 finally {
                     doc = null;
                 }
+                mySwipeRefreshLayout.setRefreshing(false);
             }
         }).start();
     }
 }
-
-//                            // Cases: 98,061
-//                            p = Pattern.compile("-?\\d+,\\d+");
-//                            p1 = Pattern.compile("-?Cases: \\d+,\\d+");
-//                            m = p1.matcher(body);
-//                            m.find();
-//                            tmpString = m.group();
-//                            m = p.matcher(tmpString);
-//                            m.find();
-//                            textViewCases.setText(m.group());
-//                            // Deaths: 3,356
-//                            p1 = Pattern.compile("-?Deaths: \\d+,\\d+");
-//                            m = p1.matcher(body);
-//                            m.find();
-//                            tmpString = m.group();
-//                            m = p.matcher(tmpString);
-//                            m.find();
-//                            textViewDeaths.setText(m.group());
-//                            // Recovered: 51,202
-//                            p1 = Pattern.compile("-?Recovered: \\d+,\\d+");
-//                            m = p1.matcher(body);
-//                            m.find();
-//                            tmpString = m.group();
-//                            m = p.matcher(tmpString);
-//                            m.find();
-//                            textViewRecovered.setText(m.group());
