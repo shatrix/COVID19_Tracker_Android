@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity"
-    android:background="@drawable/back_main"
+    android:background="@color/colorBackMiddle"
     android:id="@+id/coronaMainSwipeRefresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
@@ -20,30 +20,19 @@
                 android:descendantFocusability="beforeDescendants"
                 android:focusableInTouchMode="true"
                 android:focusable="true"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="3dp"
                 android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/textViewHEAD"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:text="COVID-19 CORONAVIRUS Latest Global Updates"
-                    android:textAlignment="center"
-                    android:textColor="@color/colorTitles"
-                    android:textSize="15dp"
-                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/textViewHEADSource"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="Source: https://www.worldometers.info/coronavirus"
+                    android:text="Source: www.worldometers.info/coronavirus"
                     android:textAlignment="center"
-                    android:textColor="@color/colorTitles"
-                    android:textSize="12dp"
+                    android:textColor="@color/colorHighlights"
+                    android:textSize="10dp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -66,22 +55,21 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
-                android:layout_marginBottom="5dp"
+                android:layout_marginBottom="3dp"
+                android:layout_marginTop="0dp"
                 android:background="@drawable/back_generic"
                 android:orientation="vertical"
-                android:paddingTop="3dp"
-                android:paddingBottom="5dp">
+                android:padding="3dp" >
 
                 <TextView
                     android:id="@+id/textView1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="5dp"
                     android:text="Total Confirmed Cases"
                     android:textAlignment="center"
                     android:textColor="@color/colorBlueDark"
-                    android:textSize="16dp"
+                    android:textSize="15dp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -96,7 +84,7 @@
                     android:text="00000"
                     android:textAlignment="center"
                     android:textColor="@color/colorBlueDark"
-                    android:textSize="26dp"
+                    android:textSize="24dp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -105,24 +93,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:layout_marginTop="0dp"
                 android:layout_marginRight="5dp"
-                android:layout_marginBottom="5dp"
+                android:layout_marginBottom="3dp"
+                android:layout_marginTop="0dp"
                 android:background="@drawable/back_generic"
                 android:orientation="vertical"
-                android:paddingTop="3dp"
-                android:paddingBottom="5dp">
+                android:padding="3dp" >
 
                 <TextView
                     android:id="@+id/textViewRecoveredTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="5dp"
                     android:text="Total Recovered"
                     android:textAlignment="center"
                     android:textColor="@color/colorGreenDark"
-                    android:textSize="16dp"
+                    android:textSize="15dp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -137,7 +123,7 @@
                     android:text="00000"
                     android:textAlignment="center"
                     android:textColor="@color/colorGreenDark"
-                    android:textSize="26dp"
+                    android:textSize="24dp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -146,24 +132,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:layout_marginTop="0dp"
                 android:layout_marginRight="5dp"
-                android:layout_marginBottom="5dp"
+                android:layout_marginBottom="3dp"
+                android:layout_marginTop="0dp"
                 android:background="@drawable/back_generic"
                 android:orientation="vertical"
-                android:paddingTop="3dp"
-                android:paddingBottom="5dp">
+                android:padding="3dp" >
 
                 <TextView
                     android:id="@+id/textViewDeathsTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="5dp"
                     android:text="Total Deaths"
                     android:textAlignment="center"
                     android:textColor="@color/colorRedDark"
-                    android:textSize="16dp"
+                    android:textSize="15dp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -178,7 +162,7 @@
                     android:text="00000"
                     android:textAlignment="center"
                     android:textColor="@color/colorRedDark"
-                    android:textSize="26dp"
+                    android:textSize="24dp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -188,7 +172,7 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginRight="5dp"
-                android:layout_marginBottom="5dp"
+                android:layout_marginBottom="0dp"
                 android:background="@drawable/back_generic"
                 android:orientation="vertical"
                 android:paddingTop="5dp"
@@ -200,11 +184,11 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="5dp"
+                    android:layout_marginBottom="3dp"
                     android:text="Confirmed Cases by Country"
                     android:textAlignment="center"
                     android:textColor="@color/colorTitles"
-                    android:textSize="16dp"
+                    android:textSize="14dp"
                     android:textStyle="bold" />
 
                 <LinearLayout
@@ -217,15 +201,13 @@
                     <EditText
                         android:layout_width="fill_parent"
                         android:id="@+id/textSearchBox"
-                        android:textSize="14dp"
+                        android:textSize="12dp"
                         android:maxLines="1"
-                        android:inputType="text"
-                        android:paddingLeft="3dp"
-                        android:paddingRight="3dp"
-                        android:paddingBottom="1dp"
-                        android:paddingTop="1dp"
+                        android:padding="3dp"
                         android:background="@drawable/back_search_text"
                         android:hint="Search here by Country name"
+                        android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz."
+                        android:inputType="textFilter"
                         android:textColor="@color/colorBlueDark"
                         android:layout_height="wrap_content" />
                 </LinearLayout>
@@ -235,7 +217,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
-                    android:background="@drawable/back_list_item"
+                    android:background="@drawable/back_table_row"
                     android:orientation="horizontal"
                     android:weightSum="5">
 
@@ -244,7 +226,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1.4"
-                        android:background="@drawable/back_list_cell"
+                        android:background="@drawable/back_table_cell"
                         android:paddingLeft="4dp"
                         android:paddingTop="2dp"
                         android:paddingRight="4dp"
@@ -260,7 +242,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_weight="1.2"
-                        android:background="@drawable/back_list_cell"
+                        android:background="@drawable/back_table_cell"
                         android:gravity="center_horizontal"
                         android:padding="2dp"
                         android:text="Cases"
@@ -275,7 +257,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_weight="1.2"
-                        android:background="@drawable/back_list_cell"
+                        android:background="@drawable/back_table_cell"
                         android:gravity="center_horizontal"
                         android:padding="2dp"
                         android:text="Recovered"
@@ -290,7 +272,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_weight="1.2"
-                        android:background="@drawable/back_list_cell"
+                        android:background="@drawable/back_table_cell"
                         android:gravity="center_horizontal"
                         android:padding="2dp"
                         android:text="Deaths"

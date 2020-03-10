@@ -5,11 +5,11 @@ android {
     buildToolsVersion "29.0.3"
 
     defaultConfig {
-        applicationId "com.shatrix.coronatracker"
+        applicationId "com.shatrix.covi19monitor"
         minSdkVersion 16
         targetSdkVersion 29
         versionCode 10
-        versionName "2.8"
+        versionName "2.8.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true

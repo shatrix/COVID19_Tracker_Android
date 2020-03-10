@@ -1,4 +1,4 @@
-package com.shatrix.coronatracker;
+package com.shatrix.covid19tracker;
 
 public class CountryLine {
 

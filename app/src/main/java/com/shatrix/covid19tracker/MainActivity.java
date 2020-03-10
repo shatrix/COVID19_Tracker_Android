@@ -1,6 +1,5 @@
-package com.shatrix.coronatracker;
+package com.shatrix.covid19tracker;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,10 +14,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.os.Handler;
 import android.widget.Toast;
-import androidx.annotation.RequiresApi;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.content.res.AppCompatResources;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -28,8 +26,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import java.text.SimpleDateFormat;
@@ -197,10 +194,9 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_info:
                 new AlertDialog.Builder(this)
-                        .setTitle("Corona COVID-19 Monitor")
+                        .setTitle("COVID-19 Tracker")
                         .setCancelable(true)
-                        .setMessage("COVID-19 CORONAVIRUS Latest Global Updates\n\n" +
-                                "Source:\nhttps://www.worldometers.info/coronavirus\n" +
+                        .setMessage("Source:\nhttps://www.worldometers.info/coronavirus\n" +
                                 "\n\n" +
                                 "Developer: Sherif Mousa (Shatrix)" +
                                 "\n" +
@@ -216,10 +212,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_share:
                 sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
-                String shareBody = "Install (COVID19 Tracker) Android Application to get the latest global updates for the COVID-19 CORONAVIRUS: \nhttps://play.google.com/store/apps/details?id=com.shatrix.coronatracker";
-                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "CORONAVIRUS COVID19 Tracker");
+                String shareBody = "Install (COVID-19 Tracker) Android Application to get the latest global updates for Coronavirus Outbreak \n\nhttps://tinyurl.com/tsvjowr";
+                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "COVID-19 Tracker");
                 sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
-                startActivity(Intent.createChooser(sharingIntent, "Share App Link via"));
+                startActivity(Intent.createChooser(sharingIntent, "Share COVID-19 Tracker Link"));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
