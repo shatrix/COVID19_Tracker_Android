@@ -206,8 +206,8 @@
                         android:padding="3dp"
                         android:background="@drawable/back_search_text"
                         android:hint="Search here by Country name"
-                        android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz."
-                        android:inputType="textFilter"
+                        android:inputType="text"
+                        android:imeOptions="actionDone"
                         android:textColor="@color/colorBlueDark"
                         android:layout_height="wrap_content" />
                 </LinearLayout>

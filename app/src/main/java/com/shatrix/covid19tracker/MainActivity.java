@@ -1,14 +1,20 @@
 package com.shatrix.covid19tracker;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -56,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     Intent sharingIntent;
     int colNumCountry, colNumCases, colNumRecovered, colNumDeaths;
     SwipeRefreshLayout mySwipeRefreshLayout;
+    InputMethodManager inputMethodManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,16 +142,16 @@ public class MainActivity extends AppCompatActivity {
         textSearchBox.addTextChangedListener(new TextWatcher() {
 
             @Override
-            public void onTextChanged(CharSequence searchSequense, int start, int before, int count) {
+            public void onTextChanged(CharSequence searchSequence, int start, int before, int count) {
                 ArrayList<CountryLine> FilteredArrList = new ArrayList<CountryLine>();
-                if (searchSequense == null || searchSequense.length() == 0) {
+                if (searchSequence == null || searchSequence.length() == 0) {
                     // back to original
                     setListViewCountries(allCountriesResults);
                 } else {
-                    searchSequense = searchSequense.toString().toLowerCase();
+                    searchSequence = searchSequence.toString().toLowerCase();
                     for (int i = 0; i < allCountriesResults.size(); i++) {
                         String data = allCountriesResults.get(i).countryName;
-                        if (data.toLowerCase().startsWith(searchSequense.toString())) {
+                        if (data.toLowerCase().startsWith(searchSequence.toString())) {
                             FilteredArrList.add(new CountryLine(
                                     allCountriesResults.get(i).countryName,
                                     allCountriesResults.get(i).cases,
@@ -165,8 +172,40 @@ public class MainActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
             }
         });
+
+        // Hide keyboard after hitting done button
+        textSearchBox.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    // do something, e.g. set your TextView here via .setText()
+                    inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                    textSearchBox.clearFocus();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        InputFilter filter = new InputFilter() {
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                String filtered = "";
+                for (int i = start; i < end; i++) {
+                    char character = source.charAt(i);
+                    if (!Character.isWhitespace(character)) {
+                        filtered += character;
+                    }
+                }
+
+                return filtered;
+            }
+
+        };
+
+        textSearchBox.setFilters(new InputFilter[] { filter });
         textSearchBox.clearFocus();
-        textSearchBox.setFocusableInTouchMode(true);
 	// Call refreshData once the app is opened only one time, then user can request updates
 	refreshData();
     }
