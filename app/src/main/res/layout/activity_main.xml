@@ -282,20 +282,29 @@
                         android:textStyle="bold"></TextView>
 
                 </LinearLayout>
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="5dp"
                     android:layout_marginTop="2dp"
                     android:layout_marginRight="5dp"
-                    android:layout_marginBottom="2dp"
-                    android:orientation="vertical">
+                    android:layout_marginBottom="2dp">
 
                     <ListView
                         android:id="@+id/listViewCountries"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"></ListView>
-                </LinearLayout>
+                        android:layout_height="match_parent">
+                    </ListView>
+
+                    <ProgressBar
+                        android:id="@+id/countryProgressBar"
+                        style="?android:attr/progressBarStyleLarge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerInParent="true"/>
+                </RelativeLayout>
 
             </LinearLayout>
 

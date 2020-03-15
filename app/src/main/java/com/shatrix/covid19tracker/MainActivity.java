@@ -15,8 +15,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.os.Handler;
 import android.widget.Toast;
@@ -45,10 +47,10 @@ public class MainActivity extends AppCompatActivity {
     EditText textSearchBox;
     Handler handler;
     String url = "https://www.worldometers.info/coronavirus/";
-    String tmpCountry, tmpCases, tmpRecovered, tmpDeaths, tmpPercentage;
-    Document doc;
-    Element countriesTable, row;
-    Elements countriesRows, cols;
+    String tmpCountry, tmpCases, tmpRecovered, tmpDeaths, tmpPercentage, germanResults;
+    Document doc, germanDoc;
+    Element countriesTable, row, germanTable;
+    Elements countriesRows, cols, germanRows;
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
     Calendar myCalender;
@@ -63,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
     int colNumCountry, colNumCases, colNumRecovered, colNumDeaths;
     SwipeRefreshLayout mySwipeRefreshLayout;
     InputMethodManager inputMethodManager;
+    Iterator<Element> rowIterator;
+    ProgressBar countryProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
         textViewDeathsTitle = (TextView)findViewById(R.id.textViewDeathsTitle);
         listViewCountries = (ListView)findViewById(R.id.listViewCountries);
         textSearchBox = (EditText)findViewById(R.id.textSearchBox);
+        countryProgressBar = (ProgressBar) findViewById(R.id.countryProgressBar);
         colNumCountry = 0; colNumCases = 1; colNumRecovered = 0; colNumDeaths = 0;
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         editor = preferences.edit();
@@ -129,6 +134,71 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        listViewCountries.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.e("CLICKED", allCountriesResults.get(position).getCountryName());
+                if(allCountriesResults.get(position).getCountryName().contains("Germany")){
+                    countryProgressBar.setVisibility(View.VISIBLE);
+                    new Thread(new Runnable(){
+                        @Override
+                        public void run() {
+                            try {
+                                germanDoc = null; // Fetches the HTML document
+                                germanResults = "";
+                                germanDoc = Jsoup.connect("https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Fallzahlen.html").timeout(10000).get();
+                                germanTable = germanDoc.select("table").get(0);
+                                germanRows = germanTable.select("tbody").select("tr");
+                                rowIterator = germanRows.iterator();
+                                runOnUiThread(new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        while (rowIterator.hasNext()) {
+                                            row = rowIterator.next();
+                                            cols = row.select("td");
+                                            if (cols.get(0).text().contains("Gesamt")) {
+                                                break;
+                                            }
+                                            germanResults = germanResults + cols.get(0).text() + " : " + cols.get(1).text().split("\\s")[0] + "\n";
+                                            //Log.e("TABLE: ", cols.get(0).text() + " : " + cols.get(1).text().split("\\s")[0]);
+                                        }
+                                        new AlertDialog.Builder(MainActivity.this)
+                                                .setTitle("Confirmed Cases in Germany")
+                                                .setCancelable(true)
+                                                .setMessage("Robert Koch Institut www.rki.de\n\n" +
+                                                        germanResults)
+                                                .setPositiveButton("Close", null)
+                                                .setIcon(R.drawable.ic_info)
+                                                .show();
+                                    }
+                                });
+                            }
+                            catch (Exception ex) {
+                                ex.printStackTrace();
+                                runOnUiThread(new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(MainActivity.this, "Network Connection Error!",
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
+                            finally {
+                                doc = null;
+                            }
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    countryProgressBar.setVisibility(View.GONE);
+                                }});
+                        }
+                    }).start();
+                }
+            }
+        });
+
         // fetch previously saved data in SharedPreferences, if any
         if(preferences.getString("textViewCases", null) != null ){
             textViewCases.setText(preferences.getString("textViewCases", null));
@@ -143,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence searchSequence, int start, int before, int count) {
-                ArrayList<CountryLine> FilteredArrList = new ArrayList<CountryLine>();
+                FilteredArrList = new ArrayList<CountryLine>();
                 if (searchSequence == null || searchSequence.length() == 0) {
                     // back to original
                     setListViewCountries(allCountriesResults);
@@ -291,7 +361,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             // get countries
-                            Iterator<Element> rowIterator = countriesRows.iterator();
+                            rowIterator = countriesRows.iterator();
                             allCountriesResults = new ArrayList<CountryLine>();
 
                             // read table header and find correct column number for each category
