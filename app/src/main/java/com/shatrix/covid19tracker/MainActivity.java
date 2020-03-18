@@ -353,7 +353,7 @@ public class MainActivity extends AppCompatActivity {
                     doc = null; // Fetches the HTML document
                     doc = Jsoup.connect(url).timeout(10000).get();
                     // table id main_table_countries
-                    countriesTable = doc.getElementById("main_table_countries");
+                    countriesTable = doc.select("table").get(0);
                     countriesRows = countriesTable.select("tr");
                     //Log.e("TITLE", elementCases.text());
                     runOnUiThread(new Runnable() {
