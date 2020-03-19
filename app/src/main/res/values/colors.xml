@@ -6,6 +6,9 @@
     <color name="colorTitles">#284452</color>
     <color name="colorBlueDark">#006381</color>
     <color name="colorBlueLight">#f3f7f9</color>
+    <color name="colorPurpleDark">#600090</color>
+    <color name="colorPurpleLight">#F0E3F7</color>
+    <color name="colorNewDark">#00AC9A</color>
     <color name="colorGreenDark">#548700</color>
     <color name="colorGreenLight">#e5f6ca</color>
     <color name="colorRedDark">#9a0000</color>

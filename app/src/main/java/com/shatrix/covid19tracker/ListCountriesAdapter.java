@@ -40,8 +40,10 @@ public class ListCountriesAdapter extends BaseAdapter {
     private class ViewHolder {
         TextView colCountryName;
         TextView colCases;
+        TextView colNewCases;
         TextView colRecovered;
         TextView colDeaths;
+        TextView colNewDeaths;
     }
 
     @Override
@@ -56,6 +58,8 @@ public class ListCountriesAdapter extends BaseAdapter {
             holder.colCases = (TextView) convertView.findViewById(R.id.colCases);
             holder.colRecovered = (TextView) convertView.findViewById(R.id.colRecovered);
             holder.colDeaths = (TextView) convertView.findViewById(R.id.colDeaths);
+            holder.colNewCases = (TextView) convertView.findViewById(R.id.colNewCases);
+            holder.colNewDeaths = (TextView) convertView.findViewById(R.id.colNewDeaths);
             convertView.setTag(holder);
         }
         else
@@ -65,8 +69,10 @@ public class ListCountriesAdapter extends BaseAdapter {
 
         holder.colCountryName.setText(allCountriesResults.get(position).countryName);
         holder.colCases.setText(allCountriesResults.get(position).cases);
+        holder.colNewCases.setText(allCountriesResults.get(position).newCases);
         holder.colRecovered.setText(allCountriesResults.get(position).recovered);
         holder.colDeaths.setText(allCountriesResults.get(position).deaths);
+        holder.colNewDeaths.setText(allCountriesResults.get(position).newDeaths);
 
         return convertView;
     }

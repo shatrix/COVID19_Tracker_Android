@@ -1,14 +1,18 @@
 package com.shatrix.covid19tracker;
 
+import android.util.Log;
+
 public class CountryLine {
 
-    public String countryName, cases, recovered, deaths;
-    public CountryLine(String countryName, String cases, String recovered, String deaths) {
+    public String countryName, cases, recovered, deaths, newCases, newDeaths;
+    public CountryLine(String countryName, String cases, String newCases, String recovered, String deaths, String newDeaths) {
         super();
         this.countryName = countryName;
         this.cases = cases;
         this.recovered = recovered;
         this.deaths = deaths;
+        this.newCases = newCases;
+        this.newDeaths = newDeaths;
     }
     public String getCountryName() {
         return countryName;
@@ -36,5 +40,19 @@ public class CountryLine {
     }
     public void setDeaths(String deaths) {
         this.deaths = deaths;
+    }
+
+    public String getNewCases() {
+        return newCases;
+    }
+    public void setNewCases(String newCases) {
+        this.newCases = newCases;
+    }
+
+    public String getNewDeaths() {
+        return newDeaths;
+    }
+    public void setNewDeaths(String newDeaths) {
+        this.newDeaths = newDeaths;
     }
 }

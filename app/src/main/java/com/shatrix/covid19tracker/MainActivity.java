@@ -43,11 +43,13 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView textViewCases, textViewRecovered, textViewDeaths, textViewDate, textViewDeathsTitle, textViewRecoveredTitle ;
+    TextView textViewCases, textViewRecovered, textViewDeaths, textViewDate, textViewDeathsTitle,
+            textViewRecoveredTitle, textViewActive, textViewActiveTitle, textViewNewDeaths,
+            textViewNewCases, textViewNewDeathsTitle, textViewNewCasesTitle ;
     EditText textSearchBox;
     Handler handler;
     String url = "https://www.worldometers.info/coronavirus/";
-    String tmpCountry, tmpCases, tmpRecovered, tmpDeaths, tmpPercentage, germanResults;
+    String tmpCountry, tmpCases, tmpRecovered, tmpDeaths, tmpPercentage, germanResults, tmpNewCases, tmpNewDeaths;
     Document doc, germanDoc;
     Element countriesTable, row, germanTable;
     Elements countriesRows, cols, germanRows;
@@ -62,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
     ListCountriesAdapter listCountriesAdapter;
     ArrayList<CountryLine> allCountriesResults, FilteredArrList;
     Intent sharingIntent;
-    int colNumCountry, colNumCases, colNumRecovered, colNumDeaths;
+    int colNumCountry, colNumCases, colNumRecovered, colNumDeaths, colNumActive, colNumNewCases, colNumNewDeaths;
     SwipeRefreshLayout mySwipeRefreshLayout;
     InputMethodManager inputMethodManager;
     Iterator<Element> rowIterator;
@@ -80,10 +82,16 @@ public class MainActivity extends AppCompatActivity {
         textViewDate = (TextView)findViewById(R.id.textViewDate);
         textViewRecoveredTitle = (TextView)findViewById(R.id.textViewRecoveredTitle);
         textViewDeathsTitle = (TextView)findViewById(R.id.textViewDeathsTitle);
+        textViewActiveTitle = (TextView)findViewById(R.id.textViewActiveTitle);
+        textViewActive = (TextView)findViewById(R.id.textViewActive);
+        textViewNewDeaths = (TextView)findViewById(R.id.textViewNewDeaths);
+        textViewNewCases = (TextView)findViewById(R.id.textViewNewCases);
+        textViewNewCasesTitle = (TextView)findViewById(R.id.textViewNewCasesTitle);
+        textViewNewDeathsTitle = (TextView)findViewById(R.id.textViewNewDeathsTitle);
         listViewCountries = (ListView)findViewById(R.id.listViewCountries);
         textSearchBox = (EditText)findViewById(R.id.textSearchBox);
         countryProgressBar = (ProgressBar) findViewById(R.id.countryProgressBar);
-        colNumCountry = 0; colNumCases = 1; colNumRecovered = 0; colNumDeaths = 0;
+        colNumCountry = 0; colNumCases = 1; colNumRecovered = 0; colNumDeaths = 0; colNumNewCases = 0; colNumNewDeaths = 0;
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         editor = preferences.edit();
         myFormat = new SimpleDateFormat("MMMM dd, yyyy, hh:mm:ss aaa", Locale.US);
@@ -205,6 +213,7 @@ public class MainActivity extends AppCompatActivity {
             textViewRecovered.setText(preferences.getString("textViewRecovered", null));
             textViewDeaths.setText(preferences.getString("textViewDeaths", null));
             textViewDate.setText(preferences.getString("textViewDate", null));
+            textViewActive.setText(preferences.getString("textViewActive", null));
             calculate_percentages();
         }
 
@@ -225,8 +234,10 @@ public class MainActivity extends AppCompatActivity {
                             FilteredArrList.add(new CountryLine(
                                     allCountriesResults.get(i).countryName,
                                     allCountriesResults.get(i).cases,
+                                    allCountriesResults.get(i).newCases,
                                     allCountriesResults.get(i).recovered,
-                                    allCountriesResults.get(i).deaths));
+                                    allCountriesResults.get(i).deaths,
+                                    allCountriesResults.get(i).newDeaths));
                         }
                     }
                     // set the Filtered result to return
@@ -336,12 +347,17 @@ public class MainActivity extends AppCompatActivity {
         tmpNumber = Double.parseDouble(textViewRecovered.getText().toString().replaceAll(",", ""))
                 / Double.parseDouble(textViewCases.getText().toString().replaceAll(",", ""))
                 * 100;
-        textViewRecoveredTitle.setText("Total Recovered   " + generalDecimalFormat.format(tmpNumber) + "%");
+        textViewRecoveredTitle.setText("Recovered   " + generalDecimalFormat.format(tmpNumber) + "%");
 
         tmpNumber = Double.parseDouble(textViewDeaths.getText().toString().replaceAll(",", ""))
                 / Double.parseDouble(textViewCases.getText().toString().replaceAll(",", ""))
                 * 100 ;
-        textViewDeathsTitle.setText("Total Deaths   " + generalDecimalFormat.format(tmpNumber) + "%");
+        textViewDeathsTitle.setText("Deaths   " + generalDecimalFormat.format(tmpNumber) + "%");
+
+        tmpNumber = Double.parseDouble(textViewActive.getText().toString().replaceAll(",", ""))
+                / Double.parseDouble(textViewCases.getText().toString().replaceAll(",", ""))
+                * 100 ;
+        textViewActiveTitle.setText("Active   " + generalDecimalFormat.format(tmpNumber) + "%");
     }
 
     void refreshData() {
@@ -376,6 +392,12 @@ public class MainActivity extends AppCompatActivity {
                                         {colNumRecovered = i; Log.e("Recovered: ", cols.get(i).text());}
                                     else if (cols.get(i).text().contains("Total") && cols.get(i).text().contains("Deaths"))
                                         {colNumDeaths = i; Log.e("Deaths: ", cols.get(i).text());}
+                                    else if (cols.get(i).text().contains("Active") && cols.get(i).text().contains("Cases"))
+                                        {colNumActive = i; Log.e("Active: ", cols.get(i).text());}
+                                    else if (cols.get(i).text().contains("New") && cols.get(i).text().contains("Cases"))
+                                        {colNumNewCases = i; Log.e("NewCases: ", cols.get(i).text());}
+                                    else if (cols.get(i).text().contains("New") && cols.get(i).text().contains("Deaths"))
+                                        {colNumNewDeaths = i; Log.e("NewDeaths: ", cols.get(i).text());}
                                 }
                             }
 
@@ -387,6 +409,13 @@ public class MainActivity extends AppCompatActivity {
                                     textViewCases.setText(cols.get(colNumCases).text());
                                     textViewRecovered.setText(cols.get(colNumRecovered).text());
                                     textViewDeaths.setText(cols.get(colNumDeaths).text());
+
+                                    if (cols.get(colNumActive).hasText()) {textViewActive.setText(cols.get(colNumActive).text());}
+                                    else {textViewActive.setText("0");}
+                                    if (cols.get(colNumNewCases).hasText()) {textViewNewCases.setText(cols.get(colNumNewCases).text());}
+                                    else {textViewNewCases.setText("0");}
+                                    if (cols.get(colNumNewDeaths).hasText()) {textViewNewDeaths.setText(cols.get(colNumNewDeaths).text());}
+                                    else {textViewNewDeaths.setText("0");}
                                     break;
                                 }
 
@@ -414,7 +443,13 @@ public class MainActivity extends AppCompatActivity {
                                 }
                                 else {tmpDeaths = "0";}
 
-                                allCountriesResults.add(new CountryLine(tmpCountry, tmpCases, tmpRecovered, tmpDeaths));
+                                if (cols.get(colNumNewCases).hasText()) {tmpNewCases = cols.get(colNumNewCases).text();}
+                                else {tmpNewCases = "0";}
+
+                                if (cols.get(colNumNewDeaths).hasText()) {tmpNewDeaths = cols.get(colNumNewDeaths).text();}
+                                else {tmpNewDeaths = "0";}
+
+                                allCountriesResults.add(new CountryLine(tmpCountry, tmpCases, tmpNewCases, tmpRecovered, tmpDeaths, tmpNewDeaths));
                             }
 
                             setListViewCountries(allCountriesResults);
@@ -424,6 +459,7 @@ public class MainActivity extends AppCompatActivity {
                             // save results
                             editor.putString("textViewCases", textViewCases.getText().toString());
                             editor.putString("textViewRecovered", textViewRecovered.getText().toString());
+                            editor.putString("textViewActive", textViewActive.getText().toString());
                             editor.putString("textViewDeaths", textViewDeaths.getText().toString());
                             editor.putString("textViewDate", textViewDate.getText().toString());
                             editor.apply();
