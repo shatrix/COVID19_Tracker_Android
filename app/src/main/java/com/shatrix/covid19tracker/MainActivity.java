@@ -214,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
             textViewDeaths.setText(preferences.getString("textViewDeaths", null));
             textViewDate.setText(preferences.getString("textViewDate", null));
             textViewActive.setText(preferences.getString("textViewActive", null));
-            calculate_percentages();
+            //calculate_percentages();
         }
 
         // Add Text Change Listener to textSearchBox to filter by Country
