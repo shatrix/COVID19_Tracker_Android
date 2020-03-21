@@ -1,7 +1,7 @@
 # Coronavirus COVID-19 Tracker Android Application
 This application displays the latest updates based on numbers from https://www.worldometers.info/coronavirus/
 
-# Download APK & install: https://tinyurl.com/tsvjowr
+## Download APK & install: https://tinyurl.com/tsvjowr
 As Google suspended all COVID-19 Tracking applications from PlayStore except the ones from WHO or an official governmental organization, that's why I had to build it as an APK to be installed manually and latest version will be always available on my GoogleDrive here https://tinyurl.com/tsvjowr
 
 <p align="center">
@@ -21,6 +21,13 @@ As Google suspended all COVID-19 Tracking applications from PlayStore except the
 
 ## External libs
 jsoup: Java HTML Parser 1.13.1 https://jsoup.org
+
+## Description
+The source code is pretty simple, so simple 😅, with each refresh I get the full #HTML page of worldometers tracking page using #jsoup library, then I parse the table contents to get all the numbers I need (total cases, recovered, active, deaths; globally and for each country) the I just display them 📲
+
+I know it's not the best way to depend on a website as it might change in the future, but when I started to code there was no APIs available to get the numbers in json or any other format, but now there's, so maybe I'll update the code to use one of them. Plus I'm not even an Android active developer 🤷
+
+PS: the App can't be uploaded to #Google #PlayStore as they've suspected all Coronavirus tracking apps, except the ones from #WHO or an official governmental organization.
 
 ## Contributing
 COVID-19 Tracker maintainer: Sherif Mousa <sherif.e.mousa@gmail.com>
