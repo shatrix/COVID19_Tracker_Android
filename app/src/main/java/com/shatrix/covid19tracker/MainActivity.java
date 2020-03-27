@@ -335,7 +335,11 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_share:
                 sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
-                String shareBody = "Install (COVID-19 Tracker) Android Application to get the latest global updates for Coronavirus Outbreak \n\nhttps://tinyurl.com/tsvjowr";
+                String shareBody = "Install (COVID-19 Tracker) Android Application to get the latest " +
+                        "global updates for Coronavirus Outbreak\nhttps://tinyurl.com/tsvjowr" +
+                        "\n\n" +
+                        "Source Code on GitHub\n" +
+                        "https://tinyurl.com/qw378qo";
                 sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "COVID-19 Tracker");
                 sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
                 startActivity(Intent.createChooser(sharingIntent, "Share COVID-19 Tracker Link"));
