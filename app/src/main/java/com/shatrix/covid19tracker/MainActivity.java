@@ -32,6 +32,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Locale;
 
@@ -305,6 +307,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void setListViewCountries(ArrayList<CountryLine> allCountriesResults) {
+        Collections.sort(allCountriesResults);
         listCountriesAdapter = new ListCountriesAdapter(this, allCountriesResults);
         listViewCountries.setAdapter(listCountriesAdapter);
     }
