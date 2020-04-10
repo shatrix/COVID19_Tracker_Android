@@ -143,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
                 v.onTouchEvent(event);
                 return true;
             }
+
             private boolean listIsAtTop()   {
                 if(listViewCountries.getChildCount() == 0) return true;
                 return listViewCountries.getChildAt(0).getTop() == 0;
@@ -188,8 +189,7 @@ public class MainActivity extends AppCompatActivity {
                                                 .show();
                                     }
                                 });
-                            }
-                            catch (Exception ex) {
+                            } catch (Exception ex) {
                                 ex.printStackTrace();
                                 runOnUiThread(new Runnable() {
 
@@ -199,8 +199,7 @@ public class MainActivity extends AppCompatActivity {
                                                 Toast.LENGTH_LONG).show();
                                     }
                                 });
-                            }
-                            finally {
+                            } finally {
                                 doc = null;
                             }
                             runOnUiThread(new Runnable() {
@@ -294,8 +293,14 @@ public class MainActivity extends AppCompatActivity {
 
         textSearchBox.setFilters(new InputFilter[] { filter });
         textSearchBox.clearFocus();
-	// Call refreshData once the app is opened only one time, then user can request updates
-	refreshData();
+        // Call refreshData once the app is opened only one time, then user can request updates
+        refreshData();
+
+        listeners();
+    }
+
+    private void listeners() {
+        
     }
 
     @Override

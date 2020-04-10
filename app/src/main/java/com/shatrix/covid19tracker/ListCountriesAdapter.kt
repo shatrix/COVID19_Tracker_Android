@@ -52,7 +52,7 @@ class ListCountriesAdapter(var context: Activity, var allCountriesResults: List<
         holder.colCases!!.text = item.cases
         holder.colNewCases!!.text = item.newCases
         holder.colRecovered!!.text = String.format("%s\n%4.2f%s", item.recovered, item.recoveredIntPercentage, "%")
-        holder.colDeaths!!.text = String.format("%s\n%4.2f%%s", item.deaths, item.deathsIntPercentage, "%")
+        holder.colDeaths!!.text = String.format("%s\n%4.2f%s", item.deaths, item.deathsIntPercentage, "%")
         holder.colNewDeaths!!.text = item.newDeaths
         return view!!
     }

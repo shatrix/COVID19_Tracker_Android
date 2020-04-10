@@ -10,7 +10,7 @@ data class CountryItem(val countryName: String, var cases: String, var recovered
     val newDeathsInt = newDeaths.toInt()
 
     val recoveredIntPercentage = (recoveredInt / casesInt.toDouble()) * 100.0
-    val deathsIntPercentage = (deathsInt / casesInt * 1.0) * 100.0
+    val deathsIntPercentage = (deathsInt / casesInt.toDouble()) * 100.0
 
 
 }
