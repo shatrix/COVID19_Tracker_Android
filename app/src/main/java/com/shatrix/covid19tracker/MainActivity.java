@@ -32,6 +32,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Locale;
 
@@ -305,6 +307,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void setListViewCountries(ArrayList<CountryLine> allCountriesResults) {
+        Collections.sort(allCountriesResults);
         listCountriesAdapter = new ListCountriesAdapter(this, allCountriesResults);
         listViewCountries.setAdapter(listCountriesAdapter);
     }
@@ -332,7 +335,11 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_share:
                 sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
-                String shareBody = "Install (COVID-19 Tracker) Android Application to get the latest global updates for Coronavirus Outbreak \n\nhttps://tinyurl.com/tsvjowr";
+                String shareBody = "Install (COVID-19 Tracker) Android Application to get the latest " +
+                        "global updates for Coronavirus Outbreak\nhttps://tinyurl.com/tsvjowr" +
+                        "\n\n" +
+                        "Source Code on GitHub\n" +
+                        "https://tinyurl.com/qw378qo";
                 sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "COVID-19 Tracker");
                 sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
                 startActivity(Intent.createChooser(sharingIntent, "Share COVID-19 Tracker Link"));
@@ -405,7 +412,7 @@ public class MainActivity extends AppCompatActivity {
                                 row = rowIterator.next();
                                 cols = row.select("td");
 
-                                if (cols.get(0).text().contains("Total")) {
+                                if (cols.get(0).text().contains("World")) {
                                     textViewCases.setText(cols.get(colNumCases).text());
                                     textViewRecovered.setText(cols.get(colNumRecovered).text());
                                     textViewDeaths.setText(cols.get(colNumDeaths).text());
@@ -416,7 +423,17 @@ public class MainActivity extends AppCompatActivity {
                                     else {textViewNewCases.setText("0");}
                                     if (cols.get(colNumNewDeaths).hasText()) {textViewNewDeaths.setText(cols.get(colNumNewDeaths).text());}
                                     else {textViewNewDeaths.setText("0");}
-                                    break;
+                                    continue;
+                                } else if (
+                                        cols.get(0).text().contains("Total") ||
+                                        cols.get(0).text().contains("Europe") ||
+                                        cols.get(0).text().contains("North America") ||
+                                        cols.get(0).text().contains("Asia") ||
+                                        cols.get(0).text().contains("South America") ||
+                                        cols.get(0).text().contains("Africa") ||
+                                        cols.get(0).text().contains("Oceania")
+                                        ) {
+                                    continue;
                                 }
 
                                 if (cols.get(colNumCountry).hasText()) {tmpCountry = cols.get(0).text();}

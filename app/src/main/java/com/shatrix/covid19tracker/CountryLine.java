@@ -2,7 +2,7 @@ package com.shatrix.covid19tracker;
 
 import android.util.Log;
 
-public class CountryLine {
+public class CountryLine implements Comparable<CountryLine>  {
 
     public String countryName, cases, recovered, deaths, newCases, newDeaths;
     public CountryLine(String countryName, String cases, String newCases, String recovered, String deaths, String newDeaths) {
@@ -54,5 +54,11 @@ public class CountryLine {
     }
     public void setNewDeaths(String newDeaths) {
         this.newDeaths = newDeaths;
+    }
+
+    @Override
+    public int compareTo(CountryLine countryLine) {
+        return Integer.parseInt(countryLine.getCases().replaceAll(",", ""))
+                - Integer.parseInt(this.cases.replaceAll(",", ""));
     }
 }
