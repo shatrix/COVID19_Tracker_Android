@@ -75,7 +75,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="Total Cases"
+                    android:text="@string/total_cases"
                     android:textAlignment="center"
                     android:textColor="@color/colorBlueDark"
                     android:textSize="15dp"
@@ -114,7 +114,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="Active"
+                    android:text="@string/active"
                     android:textAlignment="center"
                     android:textColor="@color/colorPurpleDark"
                     android:textSize="15dp"
@@ -161,7 +161,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="Recovered"
+                    android:text="@string/recovered"
                     android:textAlignment="center"
                     android:textColor="@color/colorGreenDark"
                     android:textSize="15dp"
@@ -200,7 +200,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="Deaths"
+                    android:text="@string/deaths"
                     android:textAlignment="center"
                     android:textColor="@color/colorRedDark"
                     android:textSize="15dp"
@@ -247,7 +247,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="Cases Today"
+                    android:text="@string/cases_today"
                     android:textAlignment="center"
                     android:textColor="@color/colorNewDark"
                     android:textSize="15dp"
@@ -286,7 +286,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="Deaths Today"
+                    android:text="@string/deaths_today"
                     android:textAlignment="center"
                     android:textColor="@color/colorNewDark"
                     android:textSize="15dp"
@@ -328,7 +328,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="3dp"
-                android:text="Confirmed Cases by Country"
+                android:text="@string/confirmed_cases_by_country"
                 android:textAlignment="center"
                 android:textColor="@color/colorTitles"
                 android:textSize="14dp"
@@ -339,7 +339,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
-                android:layout_marginBottom="1dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="16dp"
                 android:orientation="horizontal">
 
                 <EditText
@@ -349,7 +350,7 @@
                     android:maxLines="1"
                     android:padding="3dp"
                     android:background="@drawable/back_search_text"
-                    android:hint="Search here by Country name"
+                    android:hint="@string/search_here_by_country_name"
                     android:inputType="text"
                     android:imeOptions="actionDone"
                     android:textColor="@color/colorBlueDark"
@@ -378,7 +379,7 @@
                     android:paddingTop="2dp"
                     android:paddingRight="4dp"
                     android:paddingBottom="2dp"
-                    android:text="Country"
+                    android:text="@string/country"
                     android:textColor="@color/colorBlueDark"
                     android:textSize="13dp"
                     android:textStyle="bold" />
@@ -392,7 +393,7 @@
                     android:background="@drawable/back_table_cell"
                     android:gravity="center_horizontal"
                     android:padding="2dp"
-                    android:text="Cases"
+                    android:text="@string/cases"
                     android:onClick="sortByCases"
                     android:textAlignment="center"
                     android:textColor="@color/colorBlueDark"
@@ -409,7 +410,7 @@
                     android:gravity="center_horizontal"
                     android:padding="2dp"
                     android:onClick="sortByNewCases"
-                    android:text="Cases Today"
+                    android:text="@string/cases_today"
                     android:textAlignment="center"
                     android:textColor="@color/colorNewDark"
                     android:textSize="13dp"
@@ -425,7 +426,7 @@
                     android:gravity="center_horizontal"
                     android:padding="2dp"
                     android:onClick="sortByRecover"
-                    android:text="Recover"
+                    android:text="@string/recover"
                     android:textAlignment="center"
                     android:textColor="@color/colorGreenDark"
                     android:textSize="13dp"
@@ -440,7 +441,7 @@
                     android:background="@drawable/back_table_cell"
                     android:gravity="center_horizontal"
                     android:padding="2dp"
-                    android:text="Deaths"
+                    android:text="@string/deaths"
                     android:onClick="sortByDeaths"
                     android:textAlignment="center"
                     android:textColor="@color/colorRedDark"
@@ -456,12 +457,12 @@
                     android:background="@drawable/back_table_cell"
                     android:gravity="center_horizontal"
                     android:padding="2dp"
-                    android:text="Deaths Today"
+                    android:text="@string/deaths_today"
                     android:onClick="sortBynewDeaths"
                     android:textAlignment="center"
                     android:textColor="@color/colorNewDark"
                     android:textSize="13dp"
-                    android:textStyle="bold"></TextView>
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
@@ -469,14 +470,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="5dp"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginRight="5dp"
                 android:layout_marginBottom="2dp">
 
                 <ListView
                     android:id="@+id/listViewCountries"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"></ListView>
+                    android:layout_height="match_parent" />
 
                 <ProgressBar
                     android:id="@+id/countryProgressBar"
