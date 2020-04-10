@@ -412,7 +412,7 @@ public class MainActivity extends AppCompatActivity {
                                 row = rowIterator.next();
                                 cols = row.select("td");
 
-                                if (cols.get(0).text().contains("Total")) {
+                                if (cols.get(0).text().contains("World")) {
                                     textViewCases.setText(cols.get(colNumCases).text());
                                     textViewRecovered.setText(cols.get(colNumRecovered).text());
                                     textViewDeaths.setText(cols.get(colNumDeaths).text());
@@ -423,7 +423,17 @@ public class MainActivity extends AppCompatActivity {
                                     else {textViewNewCases.setText("0");}
                                     if (cols.get(colNumNewDeaths).hasText()) {textViewNewDeaths.setText(cols.get(colNumNewDeaths).text());}
                                     else {textViewNewDeaths.setText("0");}
-                                    break;
+                                    continue;
+                                } else if (
+                                        cols.get(0).text().contains("Total") ||
+                                        cols.get(0).text().contains("Europe") ||
+                                        cols.get(0).text().contains("North America") ||
+                                        cols.get(0).text().contains("Asia") ||
+                                        cols.get(0).text().contains("South America") ||
+                                        cols.get(0).text().contains("Africa") ||
+                                        cols.get(0).text().contains("Oceania")
+                                        ) {
+                                    continue;
                                 }
 
                                 if (cols.get(colNumCountry).hasText()) {tmpCountry = cols.get(0).text();}
