@@ -1,7 +1,11 @@
 package com.shatrix.covid19tracker;
+
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Spanned;
@@ -20,39 +24,34 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.os.Handler;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.shatrix.covid19tracker.datalayer.model.CountryItem;
+import com.shatrix.covid19tracker.util.ExtensionsKt;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.Collections;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-
-import com.shatrix.covid19tracker.datalayer.model.CountryItem;
-import com.shatrix.covid19tracker.util.ExtensionsKt;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     TextView textViewCases, textViewRecovered, textViewDeaths, textViewDate, textViewDeathsTitle,
             textViewRecoveredTitle, textViewActive, textViewActiveTitle, textViewNewDeaths,
-            textViewNewCases, textViewNewDeathsTitle, textViewNewCasesTitle;// tvColNewCases,tvColRecover,tvColCases,tvColCases,tvColCases,tvColCases ; //// TODO: 4/10/20 later use variable
+            textViewNewCases, textViewNewDeathsTitle, textViewNewCasesTitle, tvColCases, tvColNewCases, tvColRecover, tvColDeaths, tvColNewDeaths;
     EditText textSearchBox;
     Handler handler;
     String url = "https://www.worldometers.info/coronavirus/";
@@ -77,7 +76,13 @@ public class MainActivity extends AppCompatActivity {
     Iterator<Element> rowIterator;
     ProgressBar countryProgressBar;
 
-    Boolean filterTypeDesending = true;
+    Boolean caseDesending = true;
+    Boolean newCasesDesending = false;
+    Boolean recoverDesending = false;
+    Boolean deathsDesending = false;
+    Boolean newDaethsDesending = false;
+
+    TextView[] headCols;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,32 +90,48 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // All initial definitions
-        textViewCases = (TextView)findViewById(R.id.textViewCases);
-        textViewRecovered = (TextView)findViewById(R.id.textViewRecovered);
-        textViewDeaths = (TextView)findViewById(R.id.textViewDeaths);
-        textViewDate = (TextView)findViewById(R.id.textViewDate);
-        textViewRecoveredTitle = (TextView)findViewById(R.id.textViewRecoveredTitle);
-        textViewDeathsTitle = (TextView)findViewById(R.id.textViewDeathsTitle);
-        textViewActiveTitle = (TextView)findViewById(R.id.textViewActiveTitle);
-        textViewActive = (TextView)findViewById(R.id.textViewActive);
-        textViewNewDeaths = (TextView)findViewById(R.id.textViewNewDeaths);
-        textViewNewCases = (TextView)findViewById(R.id.textViewNewCases);
-        textViewNewCasesTitle = (TextView)findViewById(R.id.textViewNewCasesTitle);
-        textViewNewDeathsTitle = (TextView)findViewById(R.id.textViewNewDeathsTitle);
-        listViewCountries = (ListView)findViewById(R.id.listViewCountries);
-        textSearchBox = (EditText)findViewById(R.id.textSearchBox);
-        countryProgressBar = (ProgressBar) findViewById(R.id.countryProgressBar);
-        colNumCountry = 0; colNumCases = 1; colNumRecovered = 0; colNumDeaths = 0; colNumNewCases = 0; colNumNewDeaths = 0;
+        textViewCases = findViewById(R.id.textViewCases);
+        textViewRecovered = findViewById(R.id.textViewRecovered);
+        textViewDeaths = findViewById(R.id.textViewDeaths);
+        textViewDate = findViewById(R.id.textViewDate);
+        textViewRecoveredTitle = findViewById(R.id.textViewRecoveredTitle);
+        textViewDeathsTitle = findViewById(R.id.textViewDeathsTitle);
+        textViewActiveTitle = findViewById(R.id.textViewActiveTitle);
+        textViewActive = findViewById(R.id.textViewActive);
+        textViewNewDeaths = findViewById(R.id.textViewNewDeaths);
+        textViewNewCases = findViewById(R.id.textViewNewCases);
+        textViewNewCasesTitle = findViewById(R.id.textViewNewCasesTitle);
+        textViewNewDeathsTitle = findViewById(R.id.textViewNewDeathsTitle);
+        tvColCases = findViewById(R.id.colCasesHEAD);
+        tvColNewCases = findViewById(R.id.colNewCasesHEAD);
+        tvColRecover = findViewById(R.id.colRecoveredHEAD);
+        tvColDeaths = findViewById(R.id.colDeathsHEAD);
+        tvColNewDeaths = findViewById(R.id.colNewDeathsHEAD);
+
+        Log.d("MainActivity", "" + tvColDeaths);
+
+        headCols = new TextView[]{tvColCases, tvColNewCases, tvColRecover, tvColDeaths, tvColNewDeaths};
+
+
+        listViewCountries = findViewById(R.id.listViewCountries);
+        textSearchBox = findViewById(R.id.textSearchBox);
+        countryProgressBar = findViewById(R.id.countryProgressBar);
+        colNumCountry = 0;
+        colNumCases = 1;
+        colNumRecovered = 0;
+        colNumDeaths = 0;
+        colNumNewCases = 0;
+        colNumNewDeaths = 0;
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         editor = preferences.edit();
         myFormat = new SimpleDateFormat("MMMM dd, yyyy, hh:mm:ss aaa", Locale.US);
         myCalender = Calendar.getInstance();
-        handler = new Handler() ;
+        handler = new Handler();
         generalDecimalFormat = new DecimalFormat("0.00", symbols);
         allCountriesResults = new ArrayList<CountryItem>();
 
         // Implement Swipe to Refresh
-        mySwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.coronaMainSwipeRefresh);
+        mySwipeRefreshLayout = findViewById(R.id.coronaMainSwipeRefresh);
         mySwipeRefreshLayout.setColorScheme(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
@@ -146,8 +167,8 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
 
-            private boolean listIsAtTop()   {
-                if(listViewCountries.getChildCount() == 0) return true;
+            private boolean listIsAtTop() {
+                if (listViewCountries.getChildCount() == 0) return true;
                 return listViewCountries.getChildAt(0).getTop() == 0;
             }
         });
@@ -156,9 +177,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.e("CLICKED", allCountriesResults.get(position).getCountryName());
-                if(allCountriesResults.get(position).getCountryName().contains("Germany")){
+                if (allCountriesResults.get(position).getCountryName().contains("Germany")) {
                     countryProgressBar.setVisibility(View.VISIBLE);
-                    new Thread(new Runnable(){
+                    new Thread(new Runnable() {
                         @Override
                         public void run() {
                             try {
@@ -208,7 +229,8 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     countryProgressBar.setVisibility(View.GONE);
-                                }});
+                                }
+                            });
                         }
                     }).start();
                 }
@@ -216,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // fetch previously saved data in SharedPreferences, if any
-        if(preferences.getString("textViewCases", null) != null ){
+        if (preferences.getString("textViewCases", null) != null) {
             textViewCases.setText(preferences.getString("textViewCases", null));
             textViewRecovered.setText(preferences.getString("textViewRecovered", null));
             textViewDeaths.setText(preferences.getString("textViewDeaths", null));
@@ -254,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count,int after) {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
 
             @Override
@@ -293,7 +315,7 @@ public class MainActivity extends AppCompatActivity {
 
         };
 
-        textSearchBox.setFilters(new InputFilter[] { filter });
+        textSearchBox.setFilters(new InputFilter[]{filter});
         textSearchBox.clearFocus();
         // Call refreshData once the app is opened only one time, then user can request updates
         refreshData();
@@ -319,7 +341,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void setListViewCountries(List<CountryItem> allCountriesResults) {
+        clearsAllStates();
+        tvColCases.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_arrow_drop_down, 0);
         setData(ExtensionsKt.sortByCases(allCountriesResults, true));
+    }
+
+    private void clearsAllStates() {
+        for (TextView v : headCols) {
+            v.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+        }
+    }
+
+    private void applyNewStates(TextView view, Boolean isDown) {
+        clearsAllStates();
+        int res = 0;
+        if (isDown) res = R.drawable.ic_arrow_drop_down;
+        else res = R.drawable.ic_arrow_drop_up;
+        view.setCompoundDrawablesWithIntrinsicBounds(0, 0, res, 0);
     }
 
     //region menu selected
@@ -363,7 +401,7 @@ public class MainActivity extends AppCompatActivity {
     //endregion
 
     //region percentage
-    void calculate_percentages () {
+    void calculate_percentages() {
         tmpNumber = Double.parseDouble(textViewRecovered.getText().toString().replaceAll(",", ""))
                 / Double.parseDouble(textViewCases.getText().toString().replaceAll(",", ""))
                 * 100;
@@ -371,12 +409,12 @@ public class MainActivity extends AppCompatActivity {
 
         tmpNumber = Double.parseDouble(textViewDeaths.getText().toString().replaceAll(",", ""))
                 / Double.parseDouble(textViewCases.getText().toString().replaceAll(",", ""))
-                * 100 ;
+                * 100;
         textViewDeathsTitle.setText("Deaths   " + generalDecimalFormat.format(tmpNumber) + "%");
 
         tmpNumber = Double.parseDouble(textViewActive.getText().toString().replaceAll(",", ""))
                 / Double.parseDouble(textViewCases.getText().toString().replaceAll(",", ""))
-                * 100 ;
+                * 100;
         textViewActiveTitle.setText("Active   " + generalDecimalFormat.format(tmpNumber) + "%");
     }
     //endregion
@@ -384,7 +422,7 @@ public class MainActivity extends AppCompatActivity {
     //region refresh
     void refreshData() {
         mySwipeRefreshLayout.setRefreshing(true);
-        new Thread(new Runnable(){
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -407,8 +445,26 @@ public class MainActivity extends AppCompatActivity {
                             cols = row.select("th");
                             //Log.e("COLS: ", cols.text());
                             if (cols.get(0).text().contains("Country")) {
-                                for(int i=1; i < cols.size(); i++){
-                                    if (cols.get(i).text().contains("Total") && cols.get(i).text().contains("Cases")) {colNumCases = i; Log.e("Cases: ", cols.get(i).text());} else if (cols.get(i).text().contains("Total") && cols.get(i).text().contains("Recovered")) {colNumRecovered = i; Log.e("Recovered: ", cols.get(i).text());} else if (cols.get(i).text().contains("Total") && cols.get(i).text().contains("Deaths")) {colNumDeaths = i; Log.e("Deaths: ", cols.get(i).text());} else if (cols.get(i).text().contains("Active") && cols.get(i).text().contains("Cases")) {colNumActive = i; Log.e("Active: ", cols.get(i).text());} else if (cols.get(i).text().contains("New") && cols.get(i).text().contains("Cases")) {colNumNewCases = i; Log.e("NewCases: ", cols.get(i).text());} else if (cols.get(i).text().contains("New") && cols.get(i).text().contains("Deaths")) {colNumNewDeaths = i; Log.e("NewDeaths: ", cols.get(i).text());}
+                                for (int i = 1; i < cols.size(); i++) {
+                                    if (cols.get(i).text().contains("Total") && cols.get(i).text().contains("Cases")) {
+                                        colNumCases = i;
+                                        Log.e("Cases: ", cols.get(i).text());
+                                    } else if (cols.get(i).text().contains("Total") && cols.get(i).text().contains("Recovered")) {
+                                        colNumRecovered = i;
+                                        Log.e("Recovered: ", cols.get(i).text());
+                                    } else if (cols.get(i).text().contains("Total") && cols.get(i).text().contains("Deaths")) {
+                                        colNumDeaths = i;
+                                        Log.e("Deaths: ", cols.get(i).text());
+                                    } else if (cols.get(i).text().contains("Active") && cols.get(i).text().contains("Cases")) {
+                                        colNumActive = i;
+                                        Log.e("Active: ", cols.get(i).text());
+                                    } else if (cols.get(i).text().contains("New") && cols.get(i).text().contains("Cases")) {
+                                        colNumNewCases = i;
+                                        Log.e("NewCases: ", cols.get(i).text());
+                                    } else if (cols.get(i).text().contains("New") && cols.get(i).text().contains("Deaths")) {
+                                        colNumNewDeaths = i;
+                                        Log.e("NewDeaths: ", cols.get(i).text());
+                                    }
                                 }
                             }
 
@@ -421,9 +477,21 @@ public class MainActivity extends AppCompatActivity {
                                     textViewRecovered.setText(cols.get(colNumRecovered).text());
                                     textViewDeaths.setText(cols.get(colNumDeaths).text());
 
-                                    if (cols.get(colNumActive).hasText()) {textViewActive.setText(cols.get(colNumActive).text());} else {textViewActive.setText("0");}
-                                    if (cols.get(colNumNewCases).hasText()) {textViewNewCases.setText(cols.get(colNumNewCases).text());} else {textViewNewCases.setText("0");}
-                                    if (cols.get(colNumNewDeaths).hasText()) {textViewNewDeaths.setText(cols.get(colNumNewDeaths).text());} else {textViewNewDeaths.setText("0");}
+                                    if (cols.get(colNumActive).hasText()) {
+                                        textViewActive.setText(cols.get(colNumActive).text());
+                                    } else {
+                                        textViewActive.setText("0");
+                                    }
+                                    if (cols.get(colNumNewCases).hasText()) {
+                                        textViewNewCases.setText(cols.get(colNumNewCases).text());
+                                    } else {
+                                        textViewNewCases.setText("0");
+                                    }
+                                    if (cols.get(colNumNewDeaths).hasText()) {
+                                        textViewNewDeaths.setText(cols.get(colNumNewDeaths).text());
+                                    } else {
+                                        textViewNewDeaths.setText("0");
+                                    }
                                     continue;
                                 } else if (
                                         cols.get(0).text().contains("Total") ||
@@ -437,21 +505,41 @@ public class MainActivity extends AppCompatActivity {
                                     continue;
                                 }
 
-                                if (cols.get(colNumCountry).hasText()) {tmpCountry = cols.get(0).text();} else {tmpCountry = "NA";}
+                                if (cols.get(colNumCountry).hasText()) {
+                                    tmpCountry = cols.get(0).text();
+                                } else {
+                                    tmpCountry = "NA";
+                                }
 
-                                if (cols.get(colNumCases).hasText()) {tmpCases = cols.get(colNumCases).text();} else {tmpCases = "0";}
+                                if (cols.get(colNumCases).hasText()) {
+                                    tmpCases = cols.get(colNumCases).text();
+                                } else {
+                                    tmpCases = "0";
+                                }
 
-                                if (cols.get(colNumRecovered).hasText()){
+                                if (cols.get(colNumRecovered).hasText()) {
                                     tmpRecovered = cols.get(colNumRecovered).text();
-                                } else {tmpRecovered = "0";}
+                                } else {
+                                    tmpRecovered = "0";
+                                }
 
-                                if(cols.get(colNumDeaths).hasText()) {
+                                if (cols.get(colNumDeaths).hasText()) {
                                     tmpDeaths = cols.get(colNumDeaths).text();
-                                } else {tmpDeaths = "0";}
+                                } else {
+                                    tmpDeaths = "0";
+                                }
 
-                                if (cols.get(colNumNewCases).hasText()) {tmpNewCases = cols.get(colNumNewCases).text();} else {tmpNewCases = "0";}
+                                if (cols.get(colNumNewCases).hasText()) {
+                                    tmpNewCases = cols.get(colNumNewCases).text();
+                                } else {
+                                    tmpNewCases = "0";
+                                }
 
-                                if (cols.get(colNumNewDeaths).hasText()) {tmpNewDeaths = cols.get(colNumNewDeaths).text();} else {tmpNewDeaths = "0";}
+                                if (cols.get(colNumNewDeaths).hasText()) {
+                                    tmpNewDeaths = cols.get(colNumNewDeaths).text();
+                                } else {
+                                    tmpNewDeaths = "0";
+                                }
 
                                 allCountriesResults.add(new CountryItem(tmpCountry, tmpCases, tmpNewCases, tmpRecovered, tmpDeaths, tmpNewDeaths));
                             }
@@ -491,7 +579,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         mySwipeRefreshLayout.setRefreshing(false);
-                    }});
+                    }
+                });
             }
         }).start();
     }
@@ -501,23 +590,33 @@ public class MainActivity extends AppCompatActivity {
     //// TODO: 4/10/20 check filter case
 
     public void sortByCases(View view) {
-        setData(ExtensionsKt.sortByCases(allCountriesResults, filterTypeDesending));
+        caseDesending = !caseDesending;
+        applyNewStates((TextView) view, caseDesending);
+        setData(ExtensionsKt.sortByCases(allCountriesResults, caseDesending));
     }
 
     public void sortByNewCases(View view) {
-        setData(ExtensionsKt.sortByNewCases(allCountriesResults, filterTypeDesending));
+        newCasesDesending = !newCasesDesending;
+        applyNewStates((TextView) view, newCasesDesending);
+        setData(ExtensionsKt.sortByNewCases(allCountriesResults, newCasesDesending));
     }
 
     public void sortByRecover(View view) {
-        setData(ExtensionsKt.sortByRecover(allCountriesResults, filterTypeDesending));
+        recoverDesending = !recoverDesending;
+        applyNewStates((TextView) view, recoverDesending);
+        setData(ExtensionsKt.sortByRecover(allCountriesResults, recoverDesending));
     }
 
     public void sortByDeaths(View view) {
-        setData(ExtensionsKt.sortByDeaths(allCountriesResults, filterTypeDesending));
+        deathsDesending = !deathsDesending;
+        applyNewStates((TextView) view, deathsDesending);
+        setData(ExtensionsKt.sortByDeaths(allCountriesResults, deathsDesending));
     }
 
     public void sortBynewDeaths(View view) {
-        setData(ExtensionsKt.sortByNewDeaths(allCountriesResults, filterTypeDesending));
+        newDaethsDesending = !newDaethsDesending;
+        applyNewStates((TextView) view, newDaethsDesending);
+        setData(ExtensionsKt.sortByNewDeaths(allCountriesResults, newDaethsDesending));
     }
 
     void setData(List<CountryItem> countryItems) {

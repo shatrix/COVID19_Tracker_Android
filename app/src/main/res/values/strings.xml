@@ -8,10 +8,7 @@
     <string name="deaths_today">Deaths Today</string>
     <string name="search_here_by_country_name">Search here by Country name</string>
     <string name="confirmed_cases_by_country">Confirmed Cases by Country</string>
-    <string name="cases_today">Cases Today</string>
-    <string name="deaths_today">Deaths Today</string>
     <string name="recovered">Recovered</string>
-    <string name="deaths">Deaths</string>
     <string name="total_cases">Total Cases</string>
     <string name="active">Active</string>
 </resources>

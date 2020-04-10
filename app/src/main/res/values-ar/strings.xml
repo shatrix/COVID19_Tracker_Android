@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">COVID-19 Tracker</string>
+    <string name="country">الدولة</string>
+    <string name="recover">الشفاء</string>
+    <string name="deaths">الوفيات</string>
+    <string name="deaths_today">وفيات اليوم</string>
+    <string name="search_here_by_country_name">ابحث باسم الدولة</string>
+    <string name="confirmed_cases_by_country">"الحالات المسجلة لكل دولة "</string>
+    <string name="recovered">تم الشفاء</string>
+    <string name="total_cases">الاجمالي</string>
+    <string name="active">الحالات النشطة</string>
+    <string name="cases_today">حالات اليوم</string>
+    <string name="cases">الحالات المصابه</string>
+</resources>
