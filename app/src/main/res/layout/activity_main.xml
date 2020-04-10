@@ -345,7 +345,7 @@
                 <EditText
                     android:layout_width="fill_parent"
                     android:id="@+id/textSearchBox"
-                    android:textSize="12dp"
+                    android:textSize="@dimen/tvSearchSize"
                     android:maxLines="1"
                     android:padding="3dp"
                     android:background="@drawable/back_search_text"
@@ -353,7 +353,10 @@
                     android:inputType="text"
                     android:imeOptions="actionDone"
                     android:textColor="@color/colorBlueDark"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
                     android:layout_height="wrap_content" />
+
             </LinearLayout>
 
             <LinearLayout
@@ -378,7 +381,7 @@
                     android:text="Country"
                     android:textColor="@color/colorBlueDark"
                     android:textSize="13dp"
-                    android:textStyle="bold"></TextView>
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/colCasesHEAD"
@@ -393,7 +396,7 @@
                     android:textAlignment="center"
                     android:textColor="@color/colorBlueDark"
                     android:textSize="13dp"
-                    android:textStyle="bold"></TextView>
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/colNewCasesHEAD"
@@ -408,7 +411,7 @@
                     android:textAlignment="center"
                     android:textColor="@color/colorNewDark"
                     android:textSize="13dp"
-                    android:textStyle="bold"></TextView>
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/colRecoveredHEAD"
@@ -423,7 +426,7 @@
                     android:textAlignment="center"
                     android:textColor="@color/colorGreenDark"
                     android:textSize="13dp"
-                    android:textStyle="bold"></TextView>
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/colDeathsHEAD"
@@ -438,7 +441,7 @@
                     android:textAlignment="center"
                     android:textColor="@color/colorRedDark"
                     android:textSize="13dp"
-                    android:textStyle="bold"></TextView>
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/colNewDeathsHEAD"
