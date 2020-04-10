@@ -26,19 +26,24 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+
+import com.shatrix.covid19tracker.datalayer.model.CountryItem;
+import com.shatrix.covid19tracker.util.ExtensionsKt;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.ArrayList;
@@ -64,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
     DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
     ListView listViewCountries;
     ListCountriesAdapter listCountriesAdapter;
-    ArrayList<CountryLine> allCountriesResults, FilteredArrList;
+    ArrayList<CountryItem> allCountriesResults, FilteredArrList;
     Intent sharingIntent;
     int colNumCountry, colNumCases, colNumRecovered, colNumDeaths, colNumActive, colNumNewCases, colNumNewDeaths;
     SwipeRefreshLayout mySwipeRefreshLayout;
@@ -100,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
         myCalender = Calendar.getInstance();
         handler = new Handler() ;
         generalDecimalFormat = new DecimalFormat("0.00", symbols);
-        allCountriesResults = new ArrayList<CountryLine>();
+        allCountriesResults = new ArrayList<CountryItem>();
 
         // Implement Swipe to Refresh
         mySwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.coronaMainSwipeRefresh);
@@ -224,22 +229,22 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence searchSequence, int start, int before, int count) {
-                FilteredArrList = new ArrayList<CountryLine>();
+                FilteredArrList = new ArrayList<CountryItem>();
                 if (searchSequence == null || searchSequence.length() == 0) {
                     // back to original
                     setListViewCountries(allCountriesResults);
                 } else {
                     searchSequence = searchSequence.toString().toLowerCase();
                     for (int i = 0; i < allCountriesResults.size(); i++) {
-                        String data = allCountriesResults.get(i).countryName;
+                        String data = allCountriesResults.get(i).getCountryName();
                         if (data.toLowerCase().startsWith(searchSequence.toString())) {
-                            FilteredArrList.add(new CountryLine(
-                                    allCountriesResults.get(i).countryName,
-                                    allCountriesResults.get(i).cases,
-                                    allCountriesResults.get(i).newCases,
-                                    allCountriesResults.get(i).recovered,
-                                    allCountriesResults.get(i).deaths,
-                                    allCountriesResults.get(i).newDeaths));
+                            FilteredArrList.add(new CountryItem(
+                                    allCountriesResults.get(i).getCountryName(),
+                                    allCountriesResults.get(i).getCases(),
+                                    allCountriesResults.get(i).getNewCases(),
+                                    allCountriesResults.get(i).getRecovered(),
+                                    allCountriesResults.get(i).getDeaths(),
+                                    allCountriesResults.get(i).getNewDeaths()));
                         }
                     }
                     // set the Filtered result to return
@@ -306,9 +311,8 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    void setListViewCountries(ArrayList<CountryLine> allCountriesResults) {
-        Collections.sort(allCountriesResults);
-        listCountriesAdapter = new ListCountriesAdapter(this, allCountriesResults);
+    void setListViewCountries(List<CountryItem> allCountriesResults) {
+        listCountriesAdapter = new ListCountriesAdapter(this, ExtensionsKt.sortByCases(allCountriesResults));
         listViewCountries.setAdapter(listCountriesAdapter);
     }
 
@@ -385,7 +389,7 @@ public class MainActivity extends AppCompatActivity {
                         public void run() {
                             // get countries
                             rowIterator = countriesRows.iterator();
-                            allCountriesResults = new ArrayList<CountryLine>();
+                            allCountriesResults = new ArrayList<CountryItem>();
 
                             // read table header and find correct column number for each category
                             row = rowIterator.next();
@@ -444,19 +448,11 @@ public class MainActivity extends AppCompatActivity {
 
                                 if (cols.get(colNumRecovered).hasText()){
                                     tmpRecovered = cols.get(colNumRecovered).text();
-                                    tmpPercentage = (generalDecimalFormat.format(Double.parseDouble(tmpRecovered.replaceAll(",", ""))
-                                            / Double.parseDouble(tmpCases.replaceAll(",", ""))
-                                            * 100)) + "%";
-                                    tmpRecovered = tmpRecovered + "\n" + tmpPercentage;
                                 }
                                 else {tmpRecovered = "0";}
 
                                 if(cols.get(colNumDeaths).hasText()) {
                                     tmpDeaths = cols.get(colNumDeaths).text();
-                                    tmpPercentage = (generalDecimalFormat.format(Double.parseDouble(tmpDeaths.replaceAll(",", ""))
-                                            / Double.parseDouble(tmpCases.replaceAll(",", ""))
-                                            * 100)) + "%";
-                                    tmpDeaths = tmpDeaths + "\n" + tmpPercentage;
                                 }
                                 else {tmpDeaths = "0";}
 
@@ -466,7 +462,7 @@ public class MainActivity extends AppCompatActivity {
                                 if (cols.get(colNumNewDeaths).hasText()) {tmpNewDeaths = cols.get(colNumNewDeaths).text();}
                                 else {tmpNewDeaths = "0";}
 
-                                allCountriesResults.add(new CountryLine(tmpCountry, tmpCases, tmpNewCases, tmpRecovered, tmpDeaths, tmpNewDeaths));
+                                allCountriesResults.add(new CountryItem(tmpCountry, tmpCases, tmpNewCases, tmpRecovered, tmpDeaths, tmpNewDeaths));
                             }
 
                             setListViewCountries(allCountriesResults);
@@ -510,4 +506,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
     }
+
+
 }
