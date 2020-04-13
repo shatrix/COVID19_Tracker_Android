@@ -443,20 +443,24 @@ public class MainActivity extends AppCompatActivity {
                                 else {tmpCases = "0";}
 
                                 if (cols.get(colNumRecovered).hasText()){
-                                    tmpRecovered = cols.get(colNumRecovered).text();
-                                    tmpPercentage = (generalDecimalFormat.format(Double.parseDouble(tmpRecovered.replaceAll(",", ""))
-                                            / Double.parseDouble(tmpCases.replaceAll(",", ""))
-                                            * 100)) + "%";
-                                    tmpRecovered = tmpRecovered + "\n" + tmpPercentage;
+                                    if(!cols.get(colNumRecovered).text().contains("N/A")) {
+                                        tmpRecovered = cols.get(colNumRecovered).text();
+                                        tmpPercentage = (generalDecimalFormat.format(Double.parseDouble(tmpRecovered.replaceAll(",", ""))
+                                                / Double.parseDouble(tmpCases.replaceAll(",", ""))
+                                                * 100)) + "%";
+                                        tmpRecovered = tmpRecovered + "\n" + tmpPercentage;
+                                    }
                                 }
                                 else {tmpRecovered = "0";}
 
                                 if(cols.get(colNumDeaths).hasText()) {
-                                    tmpDeaths = cols.get(colNumDeaths).text();
-                                    tmpPercentage = (generalDecimalFormat.format(Double.parseDouble(tmpDeaths.replaceAll(",", ""))
-                                            / Double.parseDouble(tmpCases.replaceAll(",", ""))
-                                            * 100)) + "%";
-                                    tmpDeaths = tmpDeaths + "\n" + tmpPercentage;
+                                    if(!cols.get(colNumDeaths).text().contains("N/A")) {
+                                        tmpDeaths = cols.get(colNumDeaths).text();
+                                        tmpPercentage = (generalDecimalFormat.format(Double.parseDouble(tmpDeaths.replaceAll(",", ""))
+                                                / Double.parseDouble(tmpCases.replaceAll(",", ""))
+                                                * 100)) + "%";
+                                        tmpDeaths = tmpDeaths + "\n" + tmpPercentage;
+                                    }
                                 }
                                 else {tmpDeaths = "0";}
 
