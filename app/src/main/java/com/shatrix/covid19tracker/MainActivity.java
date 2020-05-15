@@ -391,28 +391,29 @@ public class MainActivity extends AppCompatActivity {
                             row = rowIterator.next();
                             cols = row.select("th");
                             //Log.e("COLS: ", cols.text());
-                            if (cols.get(0).text().contains("Country")) {
-                                for(int i=1; i < cols.size(); i++){
-                                    if (cols.get(i).text().contains("Total") && cols.get(i).text().contains("Cases"))
-                                        {colNumCases = i; Log.e("Cases: ", cols.get(i).text());}
-                                    else if (cols.get(i).text().contains("Total") && cols.get(i).text().contains("Recovered"))
-                                        {colNumRecovered = i; Log.e("Recovered: ", cols.get(i).text());}
-                                    else if (cols.get(i).text().contains("Total") && cols.get(i).text().contains("Deaths"))
-                                        {colNumDeaths = i; Log.e("Deaths: ", cols.get(i).text());}
-                                    else if (cols.get(i).text().contains("Active") && cols.get(i).text().contains("Cases"))
-                                        {colNumActive = i; Log.e("Active: ", cols.get(i).text());}
-                                    else if (cols.get(i).text().contains("New") && cols.get(i).text().contains("Cases"))
-                                        {colNumNewCases = i; Log.e("NewCases: ", cols.get(i).text());}
-                                    else if (cols.get(i).text().contains("New") && cols.get(i).text().contains("Deaths"))
-                                        {colNumNewDeaths = i; Log.e("NewDeaths: ", cols.get(i).text());}
-                                }
+
+                            for(int i=1; i < cols.size(); i++){
+                                if (cols.get(i).text().contains("Country"))
+                                {colNumCountry = i; Log.e("Country: ", cols.get(i).text());}
+                                else if (cols.get(i).text().contains("Total") && cols.get(i).text().contains("Cases"))
+                                    {colNumCases = i; Log.e("Cases: ", cols.get(i).text());}
+                                else if (cols.get(i).text().contains("Total") && cols.get(i).text().contains("Recovered"))
+                                    {colNumRecovered = i; Log.e("Recovered: ", cols.get(i).text());}
+                                else if (cols.get(i).text().contains("Total") && cols.get(i).text().contains("Deaths"))
+                                    {colNumDeaths = i; Log.e("Deaths: ", cols.get(i).text());}
+                                else if (cols.get(i).text().contains("Active") && cols.get(i).text().contains("Cases"))
+                                    {colNumActive = i; Log.e("Active: ", cols.get(i).text());}
+                                else if (cols.get(i).text().contains("New") && cols.get(i).text().contains("Cases"))
+                                    {colNumNewCases = i; Log.e("NewCases: ", cols.get(i).text());}
+                                else if (cols.get(i).text().contains("New") && cols.get(i).text().contains("Deaths"))
+                                    {colNumNewDeaths = i; Log.e("NewDeaths: ", cols.get(i).text());}
                             }
 
                             while (rowIterator.hasNext()) {
                                 row = rowIterator.next();
                                 cols = row.select("td");
 
-                                if (cols.get(0).text().contains("World")) {
+                                if (cols.get(colNumCountry).text().contains("World")) {
                                     textViewCases.setText(cols.get(colNumCases).text());
                                     textViewRecovered.setText(cols.get(colNumRecovered).text());
                                     textViewDeaths.setText(cols.get(colNumDeaths).text());
@@ -425,18 +426,18 @@ public class MainActivity extends AppCompatActivity {
                                     else {textViewNewDeaths.setText("0");}
                                     continue;
                                 } else if (
-                                        cols.get(0).text().contains("Total") ||
-                                        cols.get(0).text().contains("Europe") ||
-                                        cols.get(0).text().contains("North America") ||
-                                        cols.get(0).text().contains("Asia") ||
-                                        cols.get(0).text().contains("South America") ||
-                                        cols.get(0).text().contains("Africa") ||
-                                        cols.get(0).text().contains("Oceania")
+                                        cols.get(colNumCountry).text().contains("Total") ||
+                                        cols.get(colNumCountry).text().contains("Europe") ||
+                                        cols.get(colNumCountry).text().contains("North America") ||
+                                        cols.get(colNumCountry).text().contains("Asia") ||
+                                        cols.get(colNumCountry).text().contains("South America") ||
+                                        cols.get(colNumCountry).text().contains("Africa") ||
+                                        cols.get(colNumCountry).text().contains("Oceania")
                                         ) {
                                     continue;
                                 }
 
-                                if (cols.get(colNumCountry).hasText()) {tmpCountry = cols.get(0).text();}
+                                if (cols.get(colNumCountry).hasText()) {tmpCountry = cols.get(colNumCountry).text();}
                                 else {tmpCountry = "NA";}
 
                                 if (cols.get(colNumCases).hasText()) {tmpCases = cols.get(colNumCases).text();}
