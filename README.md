@@ -1,4 +1,4 @@
-# Coronavirus COVID-19 Tracker Android Application
+# Coronavirus COVID-19 Tracker Android Application [![HitCount](http://hits.dwyl.com/shatrix/COVID19_Tracker_Android.svg)](http://hits.dwyl.com/shatrix/COVID19_Tracker_Android)
 This application displays the latest updates based on numbers from https://www.worldometers.info/coronavirus/
 
 ## Download APK & install: https://tinyurl.com/tsvjowr
