@@ -392,22 +392,13 @@ public class MainActivity extends AppCompatActivity {
                             cols = row.select("th");
                             //Log.e("COLS: ", cols.text());
 
-                            for(int i=1; i < cols.size(); i++){
-                                if (cols.get(i).text().contains("Country"))
-                                {colNumCountry = i; Log.e("Country: ", cols.get(i).text());}
-                                else if (cols.get(i).text().contains("Total") && cols.get(i).text().contains("Cases"))
-                                    {colNumCases = i; Log.e("Cases: ", cols.get(i).text());}
-                                else if (cols.get(i).text().contains("Total") && cols.get(i).text().contains("Recovered"))
-                                    {colNumRecovered = i; Log.e("Recovered: ", cols.get(i).text());}
-                                else if (cols.get(i).text().contains("Total") && cols.get(i).text().contains("Deaths"))
-                                    {colNumDeaths = i; Log.e("Deaths: ", cols.get(i).text());}
-                                else if (cols.get(i).text().contains("Active") && cols.get(i).text().contains("Cases"))
-                                    {colNumActive = i; Log.e("Active: ", cols.get(i).text());}
-                                else if (cols.get(i).text().contains("New") && cols.get(i).text().contains("Cases"))
-                                    {colNumNewCases = i; Log.e("NewCases: ", cols.get(i).text());}
-                                else if (cols.get(i).text().contains("New") && cols.get(i).text().contains("Deaths"))
-                                    {colNumNewDeaths = i; Log.e("NewDeaths: ", cols.get(i).text());}
-                            }
+                            colNumCountry = 1;
+                            colNumCases = 2;
+                            colNumRecovered = 6;
+                            colNumDeaths =4;
+                            colNumActive = 8;
+                            colNumNewCases = 3;
+                            colNumNewDeaths = 5;
 
                             while (rowIterator.hasNext()) {
                                 row = rowIterator.next();
